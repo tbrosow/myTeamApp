@@ -6,7 +6,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 <!DOCTYPE HTML>
 <html>
 <head>
-    <title>Man of the Match | Game App</title>
+    <title>Statistics | Man of the Match | Game App</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="keywords" content="Shoppy Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template,
@@ -278,13 +278,18 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                     <div class="clearfix"> </div>
                 </div>
                 <!--market updates end here-->
-                <!--mainpage chit-chating-->
-                <div class="chit-chat-layer1">
-                    <div class="col-md-12 chit-chat-layer1-left">
-                        <div class="chsit-chat-heading">
-                            Vote Man of the Match
-                        </div>
-                        <form>
+
+                <!--main page chart start here-->
+                <div class="main-page-charts">
+                    <div class="main-page-chart-layer1">
+                        <div class="col-md-6 chart-layer1-left">
+                            <div class="glocy-chart">
+                                <div class="span-2c">
+                                    <h3 class="tlt">Games Analytics</h3>
+                                    <canvas id="bar" height="300" width="400" style="width: 400px; height: 300px;"></canvas>
+
+                                </div>
+                            </div>
                             <div class="form-group">
                                 <label for="gameSelector">Game:</label>
                                 <select id="game" class="form-control">
@@ -295,73 +300,17 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                                     %> <option value="<%= game._id %>"> <%= game.number %> <%= game.oponent %> <%= game.gameday %> </option> <%
                                     });
                                     %>
-
+                                    <option value="all">Overall Standing</option>
                                 </select>
                             </div>
-                            <div id="votingGroup">
-                            <div class="form-group">
+                        </div>
 
-                                <label for="voterSelector">Voter:</label>
-                                <select id="voter" class="form-control">
-                                    <%
-                                    players.forEach(function(player) {
-
-                                    %> <option value="<%= player._id %>"> <%= player.firstname %> <%= player.lastname %> </option> <%
-                                    });
-                                    %>
-
-                                </select>
-                            </div>
-                            <div class="form-group">
-
-                                <label for="goldSelector">Gold (3pts):</label>
-                                <select id="gold" class="form-control">
-                                    <%
-                                    players.forEach(function(player) {
-
-                                    %> <option value="<%= player._id %>"> <%= player.firstname %> <%= player.lastname %> </option> <%
-                                    });
-                                    %>
-
-                                </select>
-                            </div>
-                            <div class="form-group">
-
-                                <label for="silverSelector">Silver (2pts):</label>
-                                <select id="silver" class="form-control">
-                                    <%
-                                    players.forEach(function(player) {
-
-                                    %> <option value="<%= player._id %>"> <%= player.firstname %> <%= player.lastname %> </option> <%
-                                    });
-                                    %>
-
-                                </select>
-                            </div>
-                            <div class="form-group">
-
-                                <label for="bronzeSelector">Bronze (1pt):</label>
-                                <select id="bronze" class="form-control">
-                                    <%
-                                    players.forEach(function(player) {
-
-                                    %> <option value="<%= player._id %>"> <%= player.firstname %> <%= player.lastname %> </option> <%
-                                    });
-                                    %>
-
-                                </select>
-                            </div>
-                            </div>
-                            <button id="button_vote" style="display: none" type="button" class="btn btn-primary">Vote</button>
-                            <button id="button_not_played" style="display: none" type="button" class="btn btn-danger">Not played</button>
-                            <button id="button_results" style="display: none" type="button" class="btn btn-primary">Show Results</button>
-                        </form>
-
+                        <div class="clearfix"> </div>
                     </div>
-                    <div class="clearfix"> </div>
+
+
                 </div>
-
-
+                <!--main page chart layer2-->
                 <!--climate end here-->
             </div>
             <!--inner block end here-->
@@ -379,11 +328,11 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             </a> </div>
         <div class="menu">
             <ul id="menu" >
-                <li id="menu-home" ><a href="portal"><i class="fa fa-tachometer"></i><span>Dashboardasd</span></a></li>
+                <li id="menu-home" ><a href="portal"><i class="fa fa-tachometer"></i><span>Dashboard</span></a></li>
                 <li id="menu-home" ><a href="vote321"><i class="fa fa-tachometer"></i><span>Vote 3-2-1</span></a></li>
-                <li><a href="#"><i class="fa fa-bar-chart"></i><span>Reports</span><span class="fa fa-angle-right" style="float: right"></span></a>
+                <li><a href="#"><i class="fa fa-cogs"></i><span>Components</span><span class="fa fa-angle-right" style="float: right"></span></a>
                     <ul>
-                        <li><a href="/statistics">Overall</a></li>
+                        <li><a href="grids.html">Grids</a></li>
                         <li><a href="portlet.html">Portlets</a></li>
                     </ul>
                 </li>
@@ -431,80 +380,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
 <script>
 
-
-    $('#button_not_played').on('click', function(event) {
-        var button = $(event.relatedTarget); // Button that triggered the modal
-
-        var voteObj = {
-            game: $('#game').val(),
-            voter: $('#voter').val()
-        }
-        console.log(voteObj)
-
-        $.ajax({
-            type:'PUT',
-            url: '/createVote',
-            data: voteObj
-        }).done(function(response) {
-            console.log(response);
-
-            $('#voter')
-                .find('option')
-                .remove()
-                .end()
-
-            response.forEach(function (player) {
-                $ ('#voter').append($('<option>', {
-                    value: player._id,
-                    text: player.firstname + " " + player.lastname
-                }));
-            });
-
-        }).fail(function(response){
-            console.log("Oops not working");
-        });
-
-
-    });
-
-    $('#button_vote').on('click', function(event) {
-        var button = $(event.relatedTarget); // Button that triggered the modal
-
-        var voteObj = {
-            game: $('#game').val(),
-            voter: $('#voter').val(),
-            gold: $('#gold').val(),
-            silver: $('#silver').val(),
-            bronze: $('#bronze').val()
-        }
-        console.log(voteObj)
-
-        $.ajax({
-            type:'PUT',
-            url: '/createVote',
-            data: voteObj
-        }).done(function(response) {
-            console.log(response);
-
-            $('#voter')
-                .find('option')
-                .remove()
-                .end()
-
-            response.forEach(function (player) {
-                $ ('#voter').append($('<option>', {
-                    value: player._id,
-                    text: player.firstname + " " + player.lastname
-                }));
-            });
-
-        }).fail(function(response){
-            console.log("Oops not working");
-        });
-
-
-    });
-
     $('#game').on('change', function() {
 
         $('#voter')
@@ -512,7 +387,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             .remove()
             .end()
 
-        var url = "/getVoter";
+        var url = "/getStatistics";
         $.ajax({
             type:'GET',
             url: url,
@@ -520,243 +395,30 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 game:this.value,
             }
         }).done(function(response){
-
+            var label = [];
+            var data = [];
             console.log(response);
-            if (response.length == 0) {
-                $("#button_vote").css("display","none");
-                $("#votingGroup").css("display","none");
-                $("#button_not_played").css("display","none");
-                $("#button_results").css("display","inline");
-            } else {
-                $("#button_vote").css("display","inline");
-                $("#votingGroup").css("display","block");
-                $("#button_not_played").css("display","inline");
-                $("#button_results").css("display","none");
-            }
-            response.forEach(function (player) {
-               $ ('#voter').append($('<option>', {
-                   value: player._id,
-                   text: player.firstname + " " + player.lastname
-               }));
-            });
+            response.data.forEach(function (set) {
+                label.push(set.firstname + " " + set.lastname);
+                data.push(set.counter);
+            })
+
+            var barChartData = {
+                labels : label,
+                datasets : [
+                    {
+                        fillColor : "#FC8213",
+                        data : data
+                    }
+                ]
+
+            };
+            new Chart(document.getElementById("bar").getContext("2d")).Bar(barChartData);
 
 
         }).fail(function(response){
             console.log("Oops not working");
         });
-    });
-
-    $('#shirtSelector').on( 'click', 'a', function() {
-
-        $('#npshirt').val($(this).html())
-    });
-
-    $('#modalUpdatePlayer').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget); // Button that triggered the modal
-
-        var userObj = {
-            _id: button.data('_id'),
-            shirt: button.data('shirt'),
-            firstname: button.data('firstname'),
-            lastname: button.data('lastname'),
-            dob: button.data('dob'),
-            email: button.data('email'),
-            mobile: button.data('mobile')
-        }
-
-        var modal = $(this)
-        modal.find('.modal-title').text('Update Player # ' + userObj.shirt)
-        modal.find('#mupshirt').val(userObj.shirt)
-        modal.find('#mupfirstname').val(userObj.firstname)
-        modal.find('#muplastname').val(userObj.lastname)
-        modal.find('#mupdob').val(userObj.dob)
-        modal.find('#mupemail').val(userObj.email)
-        modal.find('#mupmobile').val(userObj.mobile)
-        modal.find('#mup_id').val(userObj._id)
-    })
-
-    $('#modalUpdateGame').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget); // Button that triggered the modal
-
-        var gameObj = {
-            _id: button.data('_id'),
-            number: button.data('number'),
-            location: button.data('location'),
-            oponent: button.data('oponent'),
-            homegame: button.data('homegame'),
-            result: button.data('result'),
-            goalsscored: button.data('goalsscored'),
-            goalsconceded: button.data('goalsconceded'),
-            gameday:button.data('gameday')
-            // mobile: button.data('mobile')
-        }
-        // alert("GAME "+JSON.stringify(gameObj))
-        var modal = $(this)
-        modal.find('.modal-title').text('Update Player # ' + gameObj.number)
-        modal.find('#ug_number').val(gameObj.number)
-        modal.find('#ug_gameday').val(gameObj.gameday)
-        modal.find('#ug_location').val(gameObj.location)
-        modal.find('#ug_result').val(gameObj.result)
-        modal.find('#ug_homegame').val(gameObj.homegame)
-        modal.find('#ug_oponent').val(gameObj.oponent)
-        // modal.find('#mupfirstname').val(userObj.firstname)
-        // modal.find('#muplastname').val(userObj.lastname)
-        // modal.find('#mupdob').val(userObj.dob)
-        // modal.find('#mupemail').val(userObj.email)
-        // modal.find('#mupmobile').val(userObj.mobile)
-        modal.find('#ug_id').val(gameObj._id)
-    })
-
-    $('#ug_save').on('click', function() {
-
-        console.log("UG Save")
-        $.ajax({
-            type:'PUT',
-            url: '/updateGame',
-            data: {
-                _id:$('#ug_id').val(),
-                goalsscored:$('#ug_goalsscored').val(),
-
-                goalsconceded: $('#ug_goalsconceded').val()
-            }
-        }).done(function(response){
-            console.log(response);
-            // window.location.replace('http://localhost:3030/');
-        }).fail(function(response){
-            console.log("Oops not working");
-        });
-
-        //$('#value').text( $('#newGoal').val() );
-        $('#modalUpdateGame').modal('hide');
-        return false;
-    });
-
-    $('#mdpdelete').on('click', function() {
-
-        console.log("Delete Player")
-        $.ajax({
-            type:'PUT',
-            url: '/deletePlayer/',
-            data: {
-                _id:$('#dp_id').val()
-            }
-        }).done(function(response){
-            console.log(response);
-            // window.location.replace('http://localhost:3030/');
-        }).fail(function(response){
-            console.log("Oops not working");
-        });
-
-        //$('#value').text( $('#newGoal').val() );
-        $('#modalDeletePlayer').modal('hide');
-        return false;
-    });
-
-    $('#modalDeletePlayer').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget); // Button that triggered the modal
-
-        var userObj = {
-            _id: button.data('_id'),
-            shirt: button.data('shirt'),
-            firstname: button.data('firstname'),
-            lastname: button.data('lastname'),
-            dob: button.data('dob'),
-            email: button.data('email'),
-            mobile: button.data('mobile')
-        }
-
-        var modal = $(this)
-        modal.find('.modal-title').text('Delete Player # ' + userObj.shirt + " (" + userObj.firstname + " " + userObj.lastname + ")")
-        modal.find('#dp_id').val(userObj._id)
-    })
-
-
-    $('#mupsave').on('click', function() {
-
-        console.log("MUP Save")
-        $.ajax({
-            type:'PUT',
-            url: '/updatePlayer',
-            data: {
-                _id:$('#mup_id').val(),
-                shirt:$('#mupshirt').val(),
-                firstname: $('#mupfirstname').val(),
-                lastname: $('#muplastname').val(),
-                dob: $('#mupdob').val(),
-                email: $('#mupemail').val(),
-                mobile: $('#mupmobile').val()
-            }
-        }).done(function(response){
-            console.log(response);
-            // window.location.replace('http://localhost:3030/');
-        }).fail(function(response){
-            console.log("Oops not working");
-        });
-
-        //$('#value').text( $('#newGoal').val() );
-        $('#modalUpdatePlayer').modal('hide');
-        return false;
-    });
-
-
-
-
-    $('#npsave').on('click', function() {
-        var validated = true;
-        if ($('#npmobile').val() == '') {
-            validated = false;
-            $('#npmobile').attr("placeholder", "Please enter a mobile number");
-        }
-        if ($('#npfirstname').val() == '') {
-            validated = false;
-            $('#npfirstname').attr("placeholder", "Please enter a name");
-        }
-        if ($('#nplastname').val() == '') {
-            validated = false;
-            $('#nplastname').attr("placeholder", "Please enter a name");
-        }
-        if ($('#npdob').val() == '') {
-            validated = false;
-            $('#npdob').attr("placeholder", "Please enter a date of birth");
-        }
-        if ($('#npmobile').val() == '') {
-            validated = false;
-            $('#npmobile').attr("placeholder", "Please enter a phone number");
-        }
-        if ($('#npemail').val() == '') {
-            validated = false;
-            $('#npemail').attr("placeholder", "Please enter an email address");
-        }
-        if ($('#npshirt').val() == '') {
-            validated = false;
-            $('#npshirt').attr("placeholder", "Please select a shirt number");
-        }
-        if (!validated) {
-            return false;
-        }
-
-        console.log("CP Save")
-        $.ajax({
-            type:'PUT',
-            url: '/newPlayer/',
-            data: {
-                shirt:$('#npshirt').val(),
-                firstname: $('#npfirstname').val(),
-                lastname: $('#nplastname').val(),
-                dob: $('#npdob').val(),
-                email: $('#npemail').val(),
-                mobile: $('#npmobile').val()
-            }
-        }).done(function(response){
-            console.log(response);
-            // window.location.replace('http://localhost:3030/');
-        }).fail(function(response){
-            console.log("Oops not working");
-        });
-
-        //$('#value').text( $('#newGoal').val() );
-        $('#modalNewPlayer').modal('hide');
-        return false;
     });
 
 

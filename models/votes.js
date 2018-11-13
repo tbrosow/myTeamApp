@@ -3,17 +3,17 @@ var mongoose = require('mongoose');
 var Schema = new mongoose.Schema({
     gold: {
         type: String,
-        required: true,
+        required: false,
         trim: true
     },
     silver: {
         type: String,
-        required: true,
+        required: false,
         trim: true
     },
     bronze: {
         type: String,
-        required: true,
+        required: false,
         trim: true
     },
     voter: {

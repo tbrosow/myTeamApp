@@ -23,7 +23,6 @@ User.find({}, function (err, docs) {
 
   // for (var key in db) { console.log (key, typeof key) ; }
 
-  
 });
 
 //use sessions for tracking logins

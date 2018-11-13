@@ -81,6 +81,44 @@ router.get('/portal', function (req, res, next) {
     });
 });
 
+router.get('/statistics', function (req, res, next) {
+    User.findById(req.session.userId).exec(function (error, user) {
+        if (error) {
+            return next(error);
+        } else {
+            if (user === null) {
+                var err = new Error('Not authorized! Go back!');
+                err.status = 400;
+                return next(err);
+            } else {
+
+                var stat = {gamesPlayed:0};
+                User.find({}, function (err, docs) {
+                    Game.find({}, function (err, games) {
+                        Vote.find({}, function (err, players) {
+                            Player.find({}, function (err, players) {
+                                for (var idx = 0; idx < games.length; idx++) {
+                                    console.log(games.length + games[idx].result)
+                                    if (games[idx].result != "") {
+                                        stat.gamesPlayed++;
+                                    }
+                                }
+                                res.render('statistics', {
+                                    user: user,
+                                    users: docs,
+                                    games: games,
+                                    players: players,
+                                    stat: stat
+                                });
+                            });
+                        });
+                    });
+                });
+            }
+        }
+    });
+});
+
 router.get('/vote321', function (req, res, next) {
     User.findById(req.session.userId).exec(function (error, user) {
         if (error) {
@@ -333,19 +371,85 @@ router.put('/newPlayer', function (req, res, next) {
     });
 });
 
-router.get('/getVotes', function (req, res, next) {
+router.get('/getVoter', function (req, res, next) {
 
-    console.log("/getVotes Game: [" + req.query.game + "]")
+    console.log("/getVoter Game: [" + req.query.game + "]")
+    var voter = [];
 
-    Vote.find({game: req.query.game}, function (error, votes) {
-        if (error) console.log(error);
-        console.log("/getVotes: " + JSON.stringify(votes))
-        res.send(votes); 
+    Player.find({}, function (error, players) {
+        console.log("/getVoter: Players: " + JSON.stringify(players));
+
+        Vote.find({game: req.query.game}, function (error, votes) {
+
+            players.forEach(function (player) {
+                var voted = false;
+                votes.forEach(function (vote) {
+                    if (String(player._id) == vote.voter) {
+                        voted = true;
+                    }
+                });
+                if (voted) {
+                    console.log("player " + player.email + " Voted")
+                } else {
+                    voter.push(player)
+                }
+            });
+
+            console.log("/getVoter [" + voter.length + "]\n" + JSON.stringify(voter))
+            res.send(voter)
+        });
+
+    });
+});
+
+router.get('/getStatistics', function (req, res, next) {
+
+    console.log("/getStatistics Game: [" + req.query.game + "]")
+    var data = [];
+
+    Player.find({}, function (error, players) {
+        console.log("/getStatistics: Players: " + JSON.stringify(players));
+        var query = {};
+        if (req.query.game != "all") {
+            query = {game: req.query.game};
+        }
+        Vote.find(query, function (error, votes) {
+
+            players.forEach(function(player) {
+
+                var tmpPlayer = JSON.parse(JSON.stringify(player));
+                tmpPlayer.counter = 0;
+
+                votes.forEach(function (vote) {
+                    // console.log("/getStatistics: vote: " + JSON.stringify(vote));
+                    console.log("/getStatistics: tmpPlayer: " + tmpPlayer._id + " " + vote.gold);
+                    if (String(tmpPlayer._id) == vote.gold) {
+                        tmpPlayer.counter += 3;
+                    }
+                    if (String(tmpPlayer._id) == vote.silver) {
+                        tmpPlayer.counter += 2;
+                    }
+                    if (String(tmpPlayer._id) == vote.bronze) {
+                        tmpPlayer.counter += 1;
+                    }
+                });
+
+                if (tmpPlayer.counter > 0) {
+                    data.push(tmpPlayer);
+                    console.log("/getStatistics: tmpPlayer: " + JSON.stringify(tmpPlayer));
+                }
+            });
+
+            res.send({data:data})
+        });
+
+
     });
 });
 
 router.put('/createVote', function (req, res, next) {
     console.log("/createVote: " + JSON.stringify(req.body))
+    var voter = [];
 
     var voteData = {
         voter: req.body.voter,
@@ -359,6 +463,31 @@ router.put('/createVote', function (req, res, next) {
     Vote.create(voteData, function (error, votes) {
         if (error) console.log(error);
         console.log("/createVote: "+JSON.stringify(votes))
+
+        Player.find({}, function (error, players) {
+            console.log("/createVote: Players: " + JSON.stringify(players));
+
+            Vote.find({game: req.body.game}, function (error, votes) {
+
+                players.forEach(function (player) {
+                    var voted = false;
+                    votes.forEach(function (vote) {
+                        if (String(player._id) == vote.voter) {
+                            voted = true;
+                        }
+                    });
+                    if (voted) {
+                        console.log("player " + player.email + " Voted")
+                    } else {
+                        voter.push(player)
+                    }
+                });
+
+                console.log("/createVote [" + voter.length + "]\n" + JSON.stringify(voter))
+                res.send(voter)
+            });
+
+        });
     });
 });
 

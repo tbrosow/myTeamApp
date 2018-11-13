@@ -1,0 +1,20 @@
+{
+  "name": "motm",
+  "version": "1.0.0",
+  "main": "",
+  "repository": "https://github.com/tbrosow/motm.git",
+  "author": "Torsten Brosow <torsten.brosow@gmail.com>",
+  "license": "none",
+  "scripts": {
+    "start": "node app",
+    "watch": "nodemon app && mongod"
+  },
+  "dependencies": {
+    "bcrypt": "^3.0.2",
+    "connect-mongo": "^2.0.1",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "express-session": "^1.15.6",
+    "mongoose": "^5.3.11"
+  }
+}

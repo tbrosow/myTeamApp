@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Norman's Game App</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
+  </head>
+  <body>
+    <div id="xx" style="color:red"><%= user.username %> - <%= user.email %></div>
+    <a href="/">home</a>
+    <a href="/logout">logout</a>
+    <a href="/profile">profile</a>
+    <a href="/register">register</a>
+
+    <% users.forEach(function(user){ %>
+      <div style="padding: 5px">
+        <div style="float: left" class="rTableCell"><label>Email: </label><input type="text" id="Location" name="Location" value="<%= user.email %>"></div>
+        <div class="rTableCell"><label>Username: </label><input type="text" id="Location" name="Location" value="<%= user.username %>"></div>
+      </div>
+    <% }); %>
+  </body>
+</html>

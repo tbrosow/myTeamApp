@@ -32,10 +32,14 @@ var Schema = new mongoose.Schema({
     type: String
   },
     goalsscored: {
-    type: Number
+      type: Number
     },
     goalsconceded: {
-    type: Number
+      type: Number
+    },
+    voted: {
+      type: Boolean,
+      default: false
     }
 
 });

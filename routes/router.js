@@ -483,6 +483,14 @@ router.put('/createVote', function (req, res, next) {
                     }
                 });
 
+                if (voter.length == 0) {
+                    var gameData = {voted: true};
+                    Game.update({_id: req.body.game}, gameData, function (error, game) {
+                        if (error) console.log(error);
+                        console.log("/updateGame: " + JSON.stringify(game))
+                    });
+
+                }
                 console.log("/createVote [" + voter.length + "]\n" + JSON.stringify(voter))
                 res.send(voter)
             });

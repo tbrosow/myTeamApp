@@ -16,6 +16,11 @@ try {
         printjson( cursor.next() );
     }
 
+    cursor = db.games.find();
+    while ( cursor.hasNext() ) {
+        printjson( cursor.next() );
+    }
+
 
 
     // db.votes.find({},function () {

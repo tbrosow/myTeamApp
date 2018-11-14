@@ -6,6 +6,10 @@ try {
         printjson( votes );
     });
 
+    cursor = db.users.find({},function(error, votes) {
+        printjson( votes );
+    });
+
 
     cursor = db.users.find();
     while ( cursor.hasNext() ) {

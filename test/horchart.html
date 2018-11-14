@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+    </head>
+    <body>
+        <div style="height: 300px; width: 400px; " id="myChart">
+            <canvas id="bar" height="300" width="600" ></canvas>
+        </div>
+
+        <script>
+
+            var ctx = document.getElementById('bar').getContext('2d');
+            var colors = [
+                '#b2d4f5',
+                '#93bfeb',
+                '#74abe2',
+                '#5899DA',
+                '#367dc4',
+                '#1866b4',
+                '#fcc3a7',
+                '#f5aa85',
+                '#ef8d5d',
+                '#E8743B',
+                '#da5a1b',
+                '#cc4300',
+                '#8fd1bb',
+                '#66c2a3',
+                '#3fb68e',
+                '#19A979',
+                '#0e8c62',
+                '#03734d',
+                '#d5dadc',
+                '#bac1c4',
+                '#9ea8ad',
+                '#848f94',
+                '#69767c',
+                '#596468'];
+
+            var chart = new Chart(ctx, {
+                // The type of chart we want to create
+                type: 'horizontalBar',
+
+                // The data for our dataset
+                data: {
+                    labels: ["January", "February", "March", "April", "May", "June", "July","January", "February", "March", "April", "May", "June", "July"],
+                    datasets: [{
+                        label: "Man of the Match - Game 1",
+                        backgroundColor: colors,
+                        borderColor: '#b2d4f5',
+                        data: [20, 10, 5, 2, 20, 30, 45,30, 10, 5, 2, 20, 30, 45],
+                    }]
+                },
+
+                // Configuration options go here
+                options: {}
+            });
+
+        </script>
+    </body>
+</html>

@@ -24,7 +24,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
     <link href='//fonts.googleapis.com/css?family=Carrois+Gothic' rel='stylesheet' type='text/css'>
     <link href='//fonts.googleapis.com/css?family=Work+Sans:400,500,600' rel='stylesheet' type='text/css'>
     <!--static chart-->
-    <script src="js/Chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+    <!--<script src="js/Chart.min.js"></script>-->
     <!--//charts-->
 
     <!--skycons-icons-->
@@ -282,11 +283,11 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 <!--main page chart start here-->
                 <div class="main-page-charts">
                     <div class="main-page-chart-layer1">
-                        <div class="col-md-6 chart-layer1-left">
+                        <div class="col-md-12 chart-layer1-left">
                             <div class="glocy-chart">
                                 <div class="span-2c">
                                     <h3 class="tlt">Games Analytics</h3>
-                                    <canvas id="bar" height="300" width="400" style="width: 400px; height: 300px;"></canvas>
+                                    <canvas id="bar" height="600" width="800" ></canvas>
 
                                 </div>
                             </div>
@@ -380,6 +381,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
 <script>
 
+    var colors = ["#b2d4f5","#93bfeb","#74abe2","#5899DA","#367dc4","#1866b4","#fcc3a7","#f5aa85","#ef8d5d","#E8743B","#da5a1b","#cc4300","#8fd1bb","#66c2a3","#3fb68e","#19A979","#0e8c62","#03734d","#d5dadc","#bac1c4","#9ea8ad","#848f94","#69767c","#596468"];
+
     $('#game').on('change', function() {
 
         $('#voter')
@@ -403,17 +406,25 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 data.push(set.counter);
             })
 
-            var barChartData = {
-                labels : label,
-                datasets : [
-                    {
-                        fillColor : "#FC8213",
-                        data : data
-                    }
-                ]
+            var ctx = document.getElementById('bar').getContext('2d');
+            var chart = new Chart(ctx, {
+                // The type of chart we want to create
+                type: 'horizontalBar',
 
-            };
-            new Chart(document.getElementById("bar").getContext("2d")).Bar(barChartData);
+                // The data for our dataset
+                data: {
+                    labels: label,
+                    datasets: [{
+                        label: "Man of the Match - Game 1",
+                        backgroundColor: colors,
+                        // borderColor: '#b2d4f5',
+                        data: data,
+                    }]
+                },
+
+                // Configuration options go here
+                options: {}
+            });
 
 
         }).fail(function(response){

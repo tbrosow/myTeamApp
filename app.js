@@ -14,15 +14,12 @@ var db = mongoose.connection;
 //handle mongo error
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
-  console.log("we're connected!");
 
+    console.log("we're connected!");
 
-User.find({}, function (err, docs) {
-  console.log("Users: " + JSON.stringify(docs, null, 4));
-});
-
-  // for (var key in db) { console.log (key, typeof key) ; }
-
+    User.find({}, function (err, docs) {
+        console.log("Users: " + JSON.stringify(docs, null, 4));
+    });
 });
 
 //use sessions for tracking logins
@@ -31,7 +28,7 @@ app.use(session({
   resave: true,
   saveUninitialized: false,
   store: new MongoStore({
-    mongooseConnection: db
+      mongooseConnection: db
   })
 }));
 

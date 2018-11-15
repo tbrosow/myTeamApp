@@ -6,8 +6,15 @@ var Player = require('../models/player');
 var Vote = require('../models/votes');
 
 
+// router.get('*', function(req, res){
+//     console.log("/root1:" + req.url + ";")
+//
+//     res.send('what???', 404);
+// });
+
 // GET route for reading data
 router.get('/', function (req, res, next) {
+    console.log("/ root")
   User.findById(req.session.userId)
     .exec(function (error, user) {
       if (error) {
@@ -19,10 +26,11 @@ router.get('/', function (req, res, next) {
           //return next(err);
           res.redirect('/login');
         } else {
-          User.find({}, function (err, docs) {
-          res.render('portal', {user:user, users: docs});
+            res.redirect('/portal');
+          // User.find({}, function (err, docs) {
+          // res.render('portal', {user:user, users: docs});
             
-          });
+
           //return res.send('<h1>Name: </h1>' + user.username + '<h2>Mail: </h2>' + user.email + '<br><a type="button" href="/logout">Logout</a>')
         }
       }
@@ -396,7 +404,8 @@ router.get('/getVoter', function (req, res, next) {
             });
 
             console.log("/getVoter [" + voter.length + "]\n" + JSON.stringify(voter))
-            res.send(voter)
+            console.log("/getVoter [" + votes.length + "]\n" + JSON.stringify(votes))
+            res.send({votes:votes, players:voter})
         });
 
     });
@@ -422,15 +431,17 @@ router.get('/getStatistics', function (req, res, next) {
 
                 votes.forEach(function (vote) {
                     // console.log("/getStatistics: vote: " + JSON.stringify(vote));
-                    console.log("/getStatistics: tmpPlayer: " + tmpPlayer._id + " " + vote.gold);
-                    if (String(tmpPlayer._id) == vote.gold) {
-                        tmpPlayer.counter += 3;
-                    }
-                    if (String(tmpPlayer._id) == vote.silver) {
-                        tmpPlayer.counter += 2;
-                    }
-                    if (String(tmpPlayer._id) == vote.bronze) {
-                        tmpPlayer.counter += 1;
+                    if (!vote.not_played) {
+                        console.log("/getStatistics: tmpPlayer: " + tmpPlayer._id + " " + vote.gold);
+                        if (String(tmpPlayer._id) == vote.gold) {
+                            tmpPlayer.counter += 3;
+                        }
+                        if (String(tmpPlayer._id) == vote.silver) {
+                            tmpPlayer.counter += 2;
+                        }
+                        if (String(tmpPlayer._id) == vote.bronze) {
+                            tmpPlayer.counter += 1;
+                        }
                     }
                 });
 
@@ -456,7 +467,8 @@ router.put('/createVote', function (req, res, next) {
         gold: req.body.gold,
         silver: req.body.silver,
         bronze: req.body.bronze,
-        game: req.body.game
+        game: req.body.game,
+        not_played: req.body.not_played || false
 
     };
 

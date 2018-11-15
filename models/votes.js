@@ -25,6 +25,10 @@ var Schema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true
+    },
+    not_played: {
+        type: Boolean,
+        default: false
     }
 
 });

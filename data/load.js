@@ -30,7 +30,12 @@ try {
    db.players.insertOne({shirt:2,firstname:"Wayne",lastname:"Stokeld",dob:"3 Oct 72 (46)",mobile:"404 023348",email:"stokes1072@outlook.com"   } );
    db.players.insertOne({shirt:5,firstname:"Antony",lastname:"Wardle",dob:"17 Jan 67 (51)",mobile:"402 792446",email:"antonywardle@gmail.com"  });
 
-   db.votes.insertOne({games:1});
+   db.votes.remove({});
+
+    cursor = db.votes.find({},function(error, votes) {
+        printjson( votes );
+    });
+
 
 } catch (e) {
    print (e);

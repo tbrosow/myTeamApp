@@ -1,0 +1,6 @@
+.formValidationError {
+    color: red;
+    padding-left: 10px;
+    font-size: smaller;
+    font-family: monospace;
+}

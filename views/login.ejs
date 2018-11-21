@@ -33,8 +33,12 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			</div>
 			<div class="login-block">
 				<form action="/login" method="post">
-					<input type="text" name="email" placeholder="Email" required="">
+					<input type="text" id="email" name="email" placeholder="Email" required="">
 					<input type="password" name="password" class="lock" placeholder="Password">
+					<select class="form-control" name="domain" id="domain" class="lock" style="display: none">
+						<option disabled selected value> -- Select your team -- </option>
+					</select>
+
 					<div class="forgot-top-grids">
 						<div class="forgot-grid">
 							<ul>
@@ -50,17 +54,17 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						<div class="clearfix"> </div>
 					</div>
 					<input type="submit" name="Sign In" value="Login">	
-					<h3>Not a member?<a href="signup.html"> Sign up now</a></h3>				
-					<h2>or login with</h2>
-					<div class="login-icons">
-						<ul>
-							<li><a href="#" class="facebook"><i class="fa fa-facebook"></i></a></li>
-							<li><a href="#" class="twitter"><i class="fa fa-twitter"></i></a></li>
-							<li><a href="#" class="google"><i class="fa fa-google-plus"></i></a></li>						
-						</ul>
-					</div>
+					<h3>Not a member?<a href="register"> Sign up now</a></h3>
+					<!--<h2>or login with</h2>-->
+					<!--<div class="login-icons">-->
+						<!--<ul>-->
+							<!--<li><a href="#" class="facebook"><i class="fa fa-facebook"></i></a></li>-->
+							<!--<li><a href="#" class="twitter"><i class="fa fa-twitter"></i></a></li>-->
+							<!--<li><a href="#" class="google"><i class="fa fa-google-plus"></i></a></li>						-->
+						<!--</ul>-->
+					<!--</div>-->
 				</form>
-				<h5><a href="index.html">Go Back to Home</a></h5>
+				<!--<h5><a href="index.html">Go Back to Home</a></h5>-->
 			</div>
       </div>
 </div>
@@ -76,6 +80,59 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		<script src="js/scripts.js"></script>
 		<!--//scrolling js-->
 <script src="js/bootstrap.js"> </script>
+<script>
+
+    var typingTimer;                //timer identifier
+    var doneTypingInterval = 700;  //time in ms, 5 second for example
+    var $input = $('#email');
+
+    //on keyup, start the countdown
+    $input.on('keyup', function () {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(doneTyping, doneTypingInterval);
+    });
+
+    //on keydown, clear the countdown
+    $input.on('keydown', function () {
+        clearTimeout(typingTimer);
+    });
+
+    //user is "finished typing," do something
+    function doneTyping () {
+        //do something
+
+        var url = "/getDomains";
+        $.ajax({
+            type:'GET',
+            url: url,
+            data: {
+                email: $input.val()
+            }
+        }).done(function(response) {
+			console.log(JSON.stringify(response))
+
+			if (response.domain.length == 0) {
+                $('#domain')
+                    .find('option')
+                    .remove()
+                    .end()
+                $("#domain").css("display","none");
+			} else {
+                $("#domain").css("display","");
+			}
+
+            response.domain.forEach(function (domain) {
+                $ ('#domain').append($('<option>', {
+                    value: domain._id,
+                    text: domain.name
+                }));
+            });
+
+        });
+    }
+
+
+</script>
 <!-- mother grid end here-->
 </body>
 </html>

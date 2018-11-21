@@ -1,14 +1,17 @@
 try {
 
+    conn = new Mongo();
+    db = conn.getDB("gameApp");
+
    db.games.remove({});
-   db.games.insertOne( {goalsScored:1, number:1,location:"Hilton More Oval", homeGame:false, gameday:"08.04.2019", result:"1:1", oponent: "Woy Woy II" } );
-   db.games.insertOne( {number:2,location:"Hilton More Oval", homegame:true, gameday:"28.04.2019", result:"2:1", oponent: "Woy Woy I" } );
-   db.games.insertOne( {number:3,location:"Hilton More Oval", homegame:false, gameday:"18.04.2019", result:"1:2", oponent: "Woy Woy II" } );
-   db.games.insertOne( {number:4,location:"Hilton More Oval", homegame:true, gameday:"04.04.2019", result:"1:3", oponent: "Woy Woy I" } );
-   db.games.insertOne( {number:5,location:"James Brown",      homegame:true, gameday:"02.04.2019", result:"2:3", oponent: "Ettalong I" } );
-   db.games.insertOne( {number:6,location:"James Brown",      homegame:false, gameday:"03.04.2019", result:"3:3", oponent: "Ettalong I" } );
-   db.games.insertOne( {number:7,location:"James Brown",      homegame:true, gameday:"04.04.2019", result:"2:1", oponent: "Ettalong I" } );
-   db.games.insertOne( {number:8,location:"James Brown",      homegame:false, gameday:"05.04.2019", result:"", oponent: "Ettalong I" } );
+   db.games.insertOne( {voted:false, goalsScored:1, number:1,location:"Hilton More Oval", homeGame:false, gameday:"08.04.2019", result:"1:1", oponent: "Woy Woy II" } );
+   db.games.insertOne( {voted:false,number:2,location:"Hilton More Oval", homegame:true, gameday:"28.04.2019", result:"2:1", oponent: "Woy Woy I" } );
+   db.games.insertOne( {voted:false,number:3,location:"Hilton More Oval", homegame:false, gameday:"18.04.2019", result:"1:2", oponent: "Woy Woy II" } );
+   db.games.insertOne( {voted:false,number:4,location:"Hilton More Oval", homegame:true, gameday:"04.04.2019", result:"1:3", oponent: "Woy Woy I" } );
+   db.games.insertOne( {voted:false,number:5,location:"James Brown",      homegame:true, gameday:"02.04.2019", result:"2:3", oponent: "Ettalong I" } );
+   db.games.insertOne( {voted:false,number:6,location:"James Brown",      homegame:false, gameday:"03.04.2019", result:"3:3", oponent: "Ettalong I" } );
+   db.games.insertOne( {voted:false,number:7,location:"James Brown",      homegame:true, gameday:"04.04.2019", result:"2:1", oponent: "Ettalong I" } );
+   db.games.insertOne( {voted:false,number:8,location:"James Brown",      homegame:false, gameday:"05.04.2019", result:"", oponent: "Ettalong I" } );
 
    db.players.remove({});
    db.players.insertOne({shirt:15,firstname:"Steve",lastname:"Austin",dob:"25 Jul 69 (49)",mobile:"431 503995",email:"austeve69@yahoo.com.au"   } );
@@ -32,10 +35,39 @@ try {
 
    db.votes.remove({});
 
-    cursor = db.votes.find({},function(error, votes) {
-        printjson( votes );
-    });
+    db.webtemplates.remove({});
+    db.webtemplates.insertOne({"name":"market", html:'<div class="market-updates"> <div class="col-md-4 market-update-gd"> <div class="market-update-block clr-block-1"> <div class="col-md-8 market-update-left"> <h3>{{USERS}}</h3> <h4>Registered Players</h4> </div><div class="col-md-4 market-update-right"> <i class="fa fa-users"> </i> </div><div class="clearfix"> </div></div></div><div class="col-md-4 market-update-gd"> <div class="market-update-block clr-block-2"> <div class="col-md-8 market-update-left"> <h3>{{GAMES}}</h3> <h4>Games Played</h4> </div><div class="col-md-4 market-update-right" > <i class="fa fa-futbol"> </i> </div><div class="clearfix"> </div></div></div><div class="col-md-4 market-update-gd"> <div class="market-update-block clr-block-3"> <div class="col-md-8 market-update-left"> <h3>{{GOALS}}</h3> <h4>Goals Scored</h4> </div><div class="col-md-4 market-update-right"> <i class="fa fa-bullseye"> </i> </div><div class="clearfix"> </div></div></div><div class="clearfix"> </div></div>'})
+    db.webtemplates.insertOne({"name":"menu", html:' <div class="sidebar-menu">\n' +
+            '        <div class="logo"> <a href="#" class="sidebar-icon"> <span class="fa fa-bars"></span> </a> <a href="#"> <span id="logo" ></span> </a> </div>\n' +
+            '        <div class="menu">\n' +
+            '            <ul id="menu" >\n' +
+            '                <li id="menu-home" ><a href="portal"><i class="fa fa-tachometer-alt"></i><span>Dashboard</span></a></li>\n' +
+            '                <li>\n' +
+            '                    <a href="#"> <i class="fab fa-hubspot"></i> <span>Manage</span> <span class="fa fa-angle-right" style="float: right"></span> </a>\n' +
+            '                    <ul>\n' +
+            '                        <li><a href="games">Games</a></li>\n' +
+            '                        <li><a href="players">Players</a></li>\n' +
+            '                    </ul>\n' +
+            '                </li>\n' +
+            '                <li id="menu-home" ><a href="vote321"><i class="fa fa-person-booth"></i><span>Vote 3-2-1</span></a></li>\n' +
+            '                <li id="menu-home" ><a href="statistics"><i class="fas fa-flag-checkered"></i><span>Reports</span></a></li>\n' +
+            '                <li id="menu-home" ><a href="logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a></li>\n' +
+            '            </ul>\n' +
+            '        </div>\n' +
+            '    </div>\n' +
+            '    <div class="clearfix"> </div>'})
+    db.webtemplates.insertOne({"name":"header", html:'<div class="header-main"> <div class="header-left"> <div class="logo-name"> <a href="index.html"> <h1>{{HEADER}}</h1> </a> </div><div class="clearfix"> </div></div><div class="clearfix"> </div></div>'})
 
+    db.properties.remove({});
+    db.properties.insertOne({name:"page.title.vote321", value:"Vote Man of the Match"})
+    db.properties.insertOne({name:"page.title.portal", value:"My Team App - Portal"})
+    db.properties.insertOne({name:"page.title.players", value:"Manage Players"})
+    db.properties.insertOne({name:"page.title.games", value:"Manage Games"})
+    db.properties.insertOne({name:"page.title.statistics", value:"Game Reports"})
+
+    db.domains.remove({});
+    db.domains.insertOne({name:"Umina O35"})
+    db.domains.insertOne({name:"Umina O45"})
 
 } catch (e) {
    print (e);

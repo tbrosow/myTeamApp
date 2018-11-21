@@ -1,0 +1,332 @@
+<!--Author: W3layouts
+   Author URL: http://w3layouts.com
+   License: Creative Commons Attribution 3.0 Unported
+   License URL: http://creativecommons.org/licenses/by/3.0/
+   -->
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Manage Players | Man of the Match | Game App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="Shoppy Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template,
+         Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
+    <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all">
+    <!-- Custom Theme files -->
+    <link href="css/style.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="css/gameApp.css" rel="stylesheet" type="text/css" media="all"/>
+    <!--js-->
+    <script src="js/jquery-2.1.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <!--icons-css-->
+    <!--<link href="css/font-awesome.css" rel="stylesheet">-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <!--Google Fonts-->
+    <link href='//fonts.googleapis.com/css?family=Carrois+Gothic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Work+Sans:400,500,600' rel='stylesheet' type='text/css'>
+    <!--static chart-->
+    <script src="js/Chart.min.js"></script>
+    <!--//charts-->
+    <!--<script src="apexcharts/apexcharts.js"></script>-->
+    <!--<script src="apexcharts/modules/Annotations.js"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <!--skycons-icons-->
+    <script src="js/skycons.js"></script>
+    <!--//skycons-icons-->
+    <script type="text/javascript" src="js/portal.js"></script>
+</head>
+<body>
+<div class="page-container">
+    <div class="left-content">
+        <div class="mother-grid-inner">
+            <!-- HEADER -->
+            <%- html["header"] %>
+
+            <!-- script-for sticky-nav -->
+            <script>
+                $(document).ready(function() {
+                    var navoffeset=$(".header-main").offset().top;
+                    $(window).scroll(function(){
+                        var scrollpos=$(window).scrollTop();
+                        if(scrollpos >=navoffeset){
+                            $(".header-main").addClass("fixed");
+                        }else{
+                            $(".header-main").removeClass("fixed");
+                        }
+                    });
+
+                });
+            </script>
+            <!-- /script-for sticky-nav -->
+            <!--inner block start here-->
+            <div class="inner-block">
+
+                <!--market updates updates-->
+                <%- html["market"] %>
+
+                <!-- PLAYERS -->
+                <div class="chit-chat-layer1">
+                    <div class="col-md-12 chit-chat-layer1-left">
+                        <div class="work-progres">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="chit-chat-heading">
+                                        Registered Players
+                                    </div>
+                                </div>
+                                <div class="col-md-4 ">
+                                 <span class="pull-right">
+                                 <button id="save2" type="button" class="btn btn-success" data-toggle="modal" data-target="#modalNewPlayer">New Player</button>
+                                 </span>
+                                </div>
+                            </div>
+                            <div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>Shirt</th>
+                                        <th>Name</th>
+                                        <th>DOB</th>
+                                        <th>Email</th>
+                                        <th>Mobile</th>
+                                        <!--                                       <th>Status</th>
+                                           <th>Progress</th>
+                                           -->
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <% players.forEach(function(player){ %>
+                                        <tr>
+                                            <td><%= player.shirt %></td>
+                                            <td><%= player.firstname %> <%= player.lastname %></td>
+                                            <td><%= player.dob %></td>
+                                            <td><%= player.email %></td>
+                                            <td><%= player.mobile %></td>
+                                            <td>
+                                                <button id="save2" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalUpdatePlayer"
+                                                        data-_id="<%= player._id %>" data-shirt="<%= player.shirt %>" data-firstname="<%= player.firstname %>"
+                                                        data-lastname="<%= player.lastname %>" data-dob="<%= player.dob %>"
+                                                        data-email="<%= player.email %>" data-mobile="<%= player.mobile %>"
+                                                >
+                                                    Update
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <button id="deletePlayer" type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalDeletePlayer"
+                                                        data-_id="<%= player._id %>" data-shirt="<%= player.shirt %>" data-firstname="<%= player.firstname %>"
+                                                        data-lastname="<%= player.lastname %>" data-dob="<%= player.dob %>"
+                                                        data-email="<%= player.email %>" data-mobile="<%= player.mobile %>"
+                                                >
+                                                    Delete
+                                                </button>
+                                            </td>
+                                            <!--
+                                               <td><span class="label label-danger">in progress</span></td>
+                                               <td><span class="badge badge-info">50%</span></td>
+                                               -->
+                                        </tr>
+                                    <% }); %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix"> </div>
+                </div>
+
+            </div>
+
+            <!--inner block end here-->
+            <!--copy rights start here-->
+            <div class="copyrights" style="padding-top: 4000px">
+                <p>© 2016 Shoppy. All Rights Reserved | Design by  <a href="http://w3layouts.com/" target="_blank">W3layouts</a> </p>
+            </div>
+            <!--COPY rights end here-->
+        </div>
+    </div>
+    <!--slider menu-->
+    <%- html["menu"] %>
+
+</div>
+<!--slide bar menu end here-->
+
+<!-- MODAL DIALOGS -->
+<!-- Modal New Player -->
+<div class="modal fade" id="modalNewPlayer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!--<div class="modal-header">-->
+            <!--<h5 class="modal-title" id="exampleModalLabel">Create new player</h5>-->
+            <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -15px">-->
+            <!--<span aria-hidden="true">&times;</span>-->
+            <!--</button>-->
+            <!--</div>-->
+            <h5 class="alert alert-warning modal-title" id="exampleModalLabel">Create new player</h5>
+            <div class="modal-body" style="display: none">
+                <label for="id" class="col-form-label">ID:</label>
+                <input class="form-control" name="_id" id="np_id">
+            </div>
+            <div class="modal-body">
+                <label for="shirt" class="col-form-label">Shirt:</label>
+                <div class="input-group">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Select <span class="caret"></span></button>
+                        <ul id="shirtSelector" class="dropdown-menu">
+                            <%
+                            for(var pl=1;pl<=20;pl++) {
+                                var shirtTaken = false;
+                                players.forEach(function(player){
+
+                                    if (pl == player.shirt) {
+                                        shirtTaken = true;
+                                    }
+                                });
+
+                            if (!shirtTaken) {
+                            %>
+                                <li> <a href="#"><%= pl %> </a></li>
+                            <%
+                            }
+                            }
+                            %>
+                            <%  %>
+                        </ul>
+                    </div>
+                    <!-- /btn-group -->
+                    <input id="npshirt" type="text" class="form-control" aria-label="...">
+                </div>
+                <!-- /input-group -->
+            </div>
+            <div class="modal-body">
+                <label for="firstname" class="col-form-label">Firstname:</label>
+                <input class="form-control" name="firstname" id="npfirstname">
+            </div>
+            <div class="modal-body">
+                <label for="lastname" class="col-form-label">Lastname:</label>
+                <input class="form-control" name="lastname" id="nplastname">
+            </div>
+            <div class="modal-body">
+                <label for="dob" class="col-form-label">Date of Birth:</label>
+                <input class="form-control" name="dob" id="npdob" value="">
+            </div>
+            <div class="modal-body">
+                <label for="email" class="col-form-label">Email:</label>
+                <input class="form-control" name="email" id="npemail">
+            </div>
+            <div class="modal-body">
+                <label for="mobile" class="col-form-label">Mobile Phone:</label>
+                <input class="form-control" name="mobile" id="npmobile">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button id="btn-new-player" type="button" class="btn btn-primary">Create Player</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Update Player -->
+<div class="modal fade" id="modalUpdatePlayer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!--<div class="modal-header">-->
+            <!--<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>-->
+            <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+            <!--<span aria-hidden="true">&times;</span>-->
+            <!--</button>-->
+            <!--</div>-->
+            <h5 class="alert alert-warning modal-title" id="exampleModalLabel"></h5>
+            <div class="modal-body" style="display: none">
+                <label for="id" class="col-form-label">ID:</label>
+                <input class="form-control" name="mup_id" id="mup_id">
+            </div>
+            <div class="modal-body">
+                <label for="shirt" class="col-form-label">Shirt:</label>
+                <input class="form-control" name="shirt" id="mupshirt">
+            </div>
+            <div class="modal-body">
+                <label for="firstname" class="col-form-label">Firstname:</label>
+                <input class="form-control" name="firstname" id="mupfirstname">
+            </div>
+            <div class="modal-body">
+                <label for="lastname" class="col-form-label">Lastname:</label>
+                <input class="form-control" name="lastname" id="muplastname">
+            </div>
+            <div class="modal-body">
+                <label for="dob" class="col-form-label">Date of Birth:</label>
+                <input class="form-control" type="text" id="mupdob">
+                <!--<input class="form-control" name="dob" id="mupdob">-->
+            </div>
+            <div class="modal-body">
+                <label for="email" class="col-form-label">Email:</label>
+                <input class="form-control" name="email" id="mupemail">
+            </div>
+            <div class="modal-body">
+                <label for="mobile" class="col-form-label">Mobile Phone:</label>
+                <input class="form-control" name="mobile" id="mupmobile">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button id="btn-update-player" type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Delete Player -->
+<div class="modal fade" id="modalDeletePlayer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!--<div class="modal-header">-->
+            <!--<h5 class="modal-title" id="exampleModalLabel">Delete Player</h5>-->
+            <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+            <!--<span aria-hidden="true">&times;</span>-->
+            <!--</button>-->
+            <!--</div>-->
+            <h5 class="alert alert-warning modal-title" id="exampleModalLabel"></h5>
+            <!--<div class="alert alert-warning" role="alert">Delete Player - This can't be undone</div>-->
+            <div class="modal-body" style="display: none">
+                <label for="id" class="col-form-label">ID:</label>
+                <input class="form-control" name="dp_id" id="dp_id">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button id="btn-delete-player" type="button" class="btn btn-primary">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    var toggle = true;
+
+    $(".sidebar-icon").click(function() {
+        if (toggle)
+        {
+            $(".page-container").addClass("sidebar-collapsed").removeClass("sidebar-collapsed-back");
+            $("#menu span").css({"position":"absolute"});
+        }
+        else
+        {
+            $(".page-container").removeClass("sidebar-collapsed").addClass("sidebar-collapsed-back");
+            setTimeout(function() {
+                $("#menu span").css({"position":"relative"});
+            }, 400);
+        }
+        toggle = !toggle;
+    });
+</script>
+<!--scrolling js-->
+<script src="js/jquery.nicescroll.js"></script>
+<script src="js/scripts.js"></script>
+<!--//scrolling js-->
+<script src="js/bootstrap.js"> </script>
+<!-- mother grid end here-->
+</body>
+</html>

@@ -10,6 +10,7 @@
     "watch": "nodemon app && mongod"
   },
   "dependencies": {
+    "apexcharts": "^2.2.2",
     "bcrypt": "^3.0.2",
     "connect-mongo": "^2.0.1",
     "ejs": "^2.6.1",

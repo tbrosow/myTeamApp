@@ -1,54 +1,79 @@
-<!--
-Author: W3layouts
+<!--Author: W3layouts
 Author URL: http://w3layouts.com
 License: Creative Commons Attribution 3.0 Unported
 License URL: http://creativecommons.org/licenses/by/3.0/
 -->
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
 <head>
-<title>Register Login with Authentication</title>
-<!--Custom Theme files-->
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="keywords" content="Register Login Widget template Responsive, Login form web template,Flat Pricing tables,Flat Drop downs  Sign up Web Templates, Flat Web Templates, Login Signup Responsive web template, SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
-<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
-<!-- Custom Theme files -->
-<link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
-<!--web-fonts-->
-<link href='//fonts.googleapis.com/css?family=Jura:400,300,500,600' rel='stylesheet' type='text/css'>
-<!--//web-fonts-->
+	<title>Shoppy an Admin Panel Category Flat Bootstrap Responsive Website Template | Login :: w3layouts</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="keywords" content="Shoppy Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template,
+Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
+	<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all">
+	<!-- Custom Theme files -->
+	<link href="css/style.css" rel="stylesheet" type="text/css" media="all"/>
+	<!--js-->
+	<script src="js/jquery-2.1.1.min.js"></script>
+	<!--icons-css-->
+	<link href="css/font-awesome.css" rel="stylesheet">
+	<!--Google Fonts-->
+	<link href='//fonts.googleapis.com/css?family=Carrois+Gothic' rel='stylesheet' type='text/css'>
+	<link href='//fonts.googleapis.com/css?family=Work+Sans:400,500,600' rel='stylesheet' type='text/css'>
+	<!--static chart-->
 </head>
 <body>
-<!-- 	<h1>Test Authentication 🚀 </h1>
- -->	<!-- main -->
-	<div class="main">
-		<a href="/"><span style="color:lime">home</span></a>
-		<!--login-profile-->
-		
-		<!--login-profile-->
-		<!--signin-form-->
-		<div class="agile">
-			<div class="signin-form profile">
-				<h3>Register</h3>
-				<div><% if(error !== null) { %> <p style="color: red"> <%= error.msg %> </p> <% } %></div>
-				<div class="login-form">
-					<form action="/register" method="post">
-						<input type="text" name="email" placeholder="E-mail" required="" value="<%= fields.email %>">
-						<input type="text" name="username" placeholder="Username" required="">
-						<input type="password" name="password" placeholder="Password" required="">
-						<input type="password" name="passwordConf" placeholder="Confirm Password" required="">
-						<input type="submit" value="REGISTER">
-					</form>
-				</div>
-				<p><a href="#"> By clicking register, I agree to your terms</a></p>
-			</div>
+<div class="login-page">
+	<div class="login-main">
+		<div class="login-head">
+			<h1>Register</h1>
 		</div>
-		<div class="clear"></div>
-		<!--//signin-form-->	
+		<div class="login-block">
+
+			<form action="/register" method="post">
+                <% if(error !== null && error.msg !== undefined) { %>
+                <div id="ERROR" class="alert alert-danger" role="alert" style="">
+                     [<%= error.msg %>]
+                </div>
+                <% } %>
+				<input type="text" name="email" placeholder="E-mail" required="" value="<%= fields.email %>">
+                <input type="text" name="username" placeholder="Username" required="">
+                <input type="text" name="team" placeholder="Team" required="">
+				<input type="password" name="password" placeholder="Password" required="">
+				<input type="password" name="passwordConf" placeholder="Confirm Password" required="">
+				<input type="submit" value="REGISTER">
+			</form>
+			<h2><a href="#"> By clicking register, I agree to your terms</a></h2>
+            <h3>Already a member?<a href="login"> Login now</a></h3>
+
+		</div>
 	</div>
-<!-- 	<div class="copyright">
-		<p> &copy; 2016 Register Login Widget . All rights reserved | Design by <a href="http://w3layouts.com/" target="_blank" >W3layouts</a></p>
-	</div>					
- --></body>
+</div>
+<!--inner block end here-->
+<!--copy rights start here-->
+<div class="copyrights">
+	<p>© 2016 Shoppy. All Rights Reserved | Design by  <a href="http://w3layouts.com/" target="_blank">W3layouts</a> </p>
+</div>
+<!--COPY rights end here-->
+
+<!--scrolling js-->
+<script src="js/jquery.nicescroll.js"></script>
+<script src="js/scripts.js"></script>
+<!--//scrolling js-->
+<script src="js/bootstrap.js"> </script>
+<!-- mother grid end here-->
+</body>
 </html>
+
+
+
+
+
+
+
+
+
+

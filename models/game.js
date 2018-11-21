@@ -3,8 +3,7 @@ var bcrypt = require('bcrypt');
 
 var Schema = new mongoose.Schema({
   number: {
-    type: String,
-    unique: true,
+    type: Number,
     required: true,
     trim: true
   },
@@ -32,14 +31,20 @@ var Schema = new mongoose.Schema({
     type: String
   },
     goalsscored: {
-      type: Number
+      type: Number,
+        default: 0
     },
     goalsconceded: {
-      type: Number
+      type: Number,
+        default: 0
     },
     voted: {
-      type: Boolean,
-      default: false
+        type: Boolean,
+        default: false
+    }
+        ,    played: {
+        type: Boolean,
+        default: false
     }
 
 });

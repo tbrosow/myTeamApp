@@ -104,13 +104,19 @@
                                         <tr>
                                             <td><%= player.shirt %></td>
                                             <td><%= player.firstname %> <%= player.lastname %></td>
-                                            <td><%= player.dob %></td>
+                                            <%
+                                                let newDate = new Date(player.dob);
+                                                let day = ("0" + newDate.getDate()).slice(-2);
+                                                let month = ("0" + (newDate.getMonth()+1)).slice(-2);
+                                                let dateout = newDate.getFullYear() + "-" + month + "-" + day;
+                                            %>
+                                            <td><%= dateout %></td>
                                             <td><%= player.email %></td>
                                             <td><%= player.mobile %></td>
                                             <td>
                                                 <button id="save2" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalUpdatePlayer"
                                                         data-_id="<%= player._id %>" data-shirt="<%= player.shirt %>" data-firstname="<%= player.firstname %>"
-                                                        data-lastname="<%= player.lastname %>" data-dob="<%= player.dob %>"
+                                                        data-lastname="<%= player.lastname %>" data-dob="<%= dateout %>"
                                                         data-email="<%= player.email %>" data-mobile="<%= player.mobile %>"
                                                 >
                                                     Update
@@ -119,7 +125,7 @@
                                             <td>
                                                 <button id="deletePlayer" type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalDeletePlayer"
                                                         data-_id="<%= player._id %>" data-shirt="<%= player.shirt %>" data-firstname="<%= player.firstname %>"
-                                                        data-lastname="<%= player.lastname %>" data-dob="<%= player.dob %>"
+                                                        data-lastname="<%= player.lastname %>" data-dob="<%= dateout %>"
                                                         data-email="<%= player.email %>" data-mobile="<%= player.mobile %>"
                                                 >
                                                     Delete

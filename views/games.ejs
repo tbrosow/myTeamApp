@@ -102,8 +102,14 @@
                                     <% games.forEach(function(game){ %>
                                         <tr id="G_<%= game._id %>">
                                             <td><%= game.number %></td>
-                                            <td><%= game.gameday %></td>
-                                            <td><%= game.oponent %></td>
+                                            <%
+                                                let newDate = new Date(game.gameday);
+                                                let day = ("0" + newDate.getDate()).slice(-2);
+                                                let month = ("0" + (newDate.getMonth()+1)).slice(-2);
+                                                let dateout = newDate.getFullYear() + "-" + month + "-" + day;
+                                            %>
+                                            <td><%= dateout %></td>
+                                            <td><%= game.team %></td>
                                             <td>
                                                 <% if (game.homegame == true) { %>
                                                     <button id="savemodalUpdateGame" type="button" class="btn btn-success" data-toggle="modal">
@@ -116,13 +122,20 @@
                                                 <% } %>
                                             </td>
                                             <td><%= game.location %></td>
-                                            <td><%= game.goalsscored %> : <%= game.goalsconceded %></td>
+
+                                            <% if (game.played) { %>
+                                                <td><%= game.goalsscored %> : <%= game.goalsconceded %></td>
+                                            <% } else { %>
+                                                <td>-:-</td>
+                                            <% } %>
+
+                                                
                                             <td>
                                                 <button id="savemodalUpdateGame" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalUpdateGame"
                                                         data-_id="<%= game._id %>"
                                                         data-number="<%= game.number %>"
-                                                        data-gameDay="<%= game.gameday %>"
-                                                        data-oponent="<%= game.oponent %>"
+                                                        data-gameDay="<%= dateout %>"
+                                                        data-team="<%= game.team %>"
                                                         data-homeGame="<%= game.homegame %>"
                                                         data-location="<%= game.location %>"
                                                         data-result="<%= game.result %>"
@@ -137,7 +150,7 @@
                                                         data-_id="<%= game._id %>"
                                                         data-number="<%= game.number %>"
                                                         data-gameDay="<%= game.gameday %>"
-                                                        data-oponent="<%= game.oponent %>"
+                                                        data-oponent="<%= game.team %>"
                                                         data-homeGame="<%= game.homegame %>"
                                                         data-location="<%= game.location %>"
                                                         data-result="<%= game.result %>"
@@ -221,8 +234,8 @@
                 <input class="form-control" name="ug_gameday" id="ug_gameday">
             </div>
             <div class="modal-body" style="">
-                <label for="ug_oponent" class="col-form-label">Oponent:</label>
-                <input class="form-control" name="ug_oponent" id="ug_oponent">
+                <label for="ug_team" class="col-form-label">Team:</label>
+                <input class="form-control" name="ug_team" id="ug_team">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

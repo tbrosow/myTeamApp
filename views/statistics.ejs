@@ -104,7 +104,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                                             <%
                                             gamesVoted.forEach(function(game) {
 
-                                            %> <option value="<%= game._id %>"> <%= game.number %> <%= game.oponent %> <%= game.gameday %> </option> <%
+                                            %> <option value="<%= game._id %>"> #<%= game.number %> <%= game.team %> (<%= game.result %>) [<%= game.gameday %>] </option> <%
                                             });
                                             %>
                                             <option value="all">Overall Standing</option>

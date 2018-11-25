@@ -27,6 +27,14 @@ var UserSchema = new mongoose.Schema({
     },
     roles: {
         type: Array
+    },
+    domain: {
+        id: {
+            type: String
+        },
+        display: {
+            type: String
+        }
     }
 });
 

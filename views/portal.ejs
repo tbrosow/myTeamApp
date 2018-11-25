@@ -150,7 +150,7 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Date</th>
-                                        <th>Oponent</th>
+                                        <th>Team</th>
                                         <th>Home/Away</th>
                                         <th>Ground / Oval</th>
                                         <th>Result</th>
@@ -165,7 +165,7 @@
                                         <tr id="G_<%= game._id %>">
                                             <td><%= game.number %></td>
                                             <td><%= game.gameday %></td>
-                                            <td><%= game.oponent %></td>
+                                            <td><%= game.team %></td>
                                             <td>
                                                 <% if (game.homegame == true) { %>
                                                     Home game
@@ -174,13 +174,17 @@
                                                 <% } %>
                                             </td>
                                             <td><%= game.location %></td>
-                                            <td><%= game.goalsscored %> : <%= game.goalsconceded %></td>
+                                            <% if (game.played) { %>
+                                                <td><%= game.goalsscored %> : <%= game.goalsconceded %></td>
+                                            <% } else { %>
+                                                <td>-:-</td>
+                                            <% } %>
                                             <td>
                                                 <button id="savemodalUpdateGame" type="button" class="btn btn-info" data-toggle="modal" data-target="#modalUpdateGame"
                                                         data-_id="<%= game._id %>"
                                                         data-number="<%= game.number %>"
                                                         data-gameDay="<%= game.gameday %>"
-                                                        data-oponent="<%= game.oponent %>"
+                                                        data-oponent="<%= game.team %>"
                                                         data-homeGame="<%= game.homegame %>"
                                                         data-location="<%= game.location %>"
                                                         data-result="<%= game.result %>"

@@ -29,6 +29,14 @@ var Schema = new mongoose.Schema({
     not_played: {
         type: Boolean,
         default: false
+    },
+    domain: {
+        id: {
+            type: String
+        },
+        display: {
+            type: String
+        }
     }
 
 });

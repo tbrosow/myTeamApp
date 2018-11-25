@@ -1,0 +1,176 @@
+<!--Author: W3layouts
+   Author URL: http://w3layouts.com
+   License: Creative Commons Attribution 3.0 Unported
+   License URL: http://creativecommons.org/licenses/by/3.0/
+   -->
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Portal | Man of the Match | Game App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="Shoppy Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template,
+         Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
+    <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all">
+    <!-- Custom Theme files -->
+    <link href="css/style.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="css/gameApp.css" rel="stylesheet" type="text/css" media="all"/>
+    <!--js-->
+    <script src="js/jquery-2.1.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <!--icons-css-->
+    <!--<link href="css/font-awesome.css" rel="stylesheet">-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <!--Google Fonts-->
+    <link href='//fonts.googleapis.com/css?family=Carrois+Gothic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Work+Sans:400,500,600' rel='stylesheet' type='text/css'>
+    <!--static chart-->
+    <script src="js/Chart.min.js"></script>
+    <!--//charts-->
+    <!--<script src="apexcharts/apexcharts.js"></script>-->
+    <!--<script src="apexcharts/modules/Annotations.js"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <!--skycons-icons-->
+    <script src="js/skycons.js"></script>
+    <!--//skycons-icons-->
+    <script type="text/javascript" src="js/portal.js"></script>
+</head>
+<body>
+<div class="page-container">
+    <div class="left-content">
+        <div class="mother-grid-inner">
+            <!-- HEADER -->
+            <%- html["header"] %>
+
+            <!-- script-for sticky-nav -->
+            <script>
+                $(document).ready(function() {
+                    var navoffeset=$(".header-main").offset().top;
+                    $(window).scroll(function(){
+                        var scrollpos=$(window).scrollTop();
+                        if(scrollpos >=navoffeset){
+                            $(".header-main").addClass("fixed");
+                        }else{
+                            $(".header-main").removeClass("fixed");
+                        }
+                    });
+
+                });
+            </script>
+            <!-- /script-for sticky-nav -->
+            <!--inner block start here-->
+            <div class="inner-block">
+
+                <!--market updates updates-->
+                <%- html["market"] %>
+                <div class="chit-chat-layer1">
+                    <div class="col-md-12 chit-chat-layer1-left">
+                        <div class="work-progres">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="chit-chat-heading">
+
+                <button id="modal-btn-load-data" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalLoadData"
+                        data-_id="<%= players._id %>"
+                >Load Demo Data</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix"> </div>
+                </div>
+
+            </div>
+
+            <!--inner block end here-->
+            <!--copy rights start here-->
+            <div class="copyrights" style="padding-top: 4000px">
+                <p>© 2016 Shoppy. All Rights Reserved | Design by  <a href="http://w3layouts.com/" target="_blank">W3layouts</a> </p>
+            </div>
+            <!--COPY rights end here-->
+        </div>
+    </div>
+    <!--slider menu-->
+    <%- html["menu"] %>
+
+    <!--<div class="sidebar-menu">-->
+        <!--<div class="logo"> <a href="#" class="sidebar-icon"> <span class="fa fa-bars"></span> </a> <a href="#"> <span id="logo" ></span> </a> </div>-->
+        <!--<div class="menu">-->
+            <!--<ul id="menu" >-->
+                <!--<li id="menu-home" ><a href="portal"><i class="fa fa-tachometer-alt"></i><span>Dashboard</span></a></li>-->
+                <!--<li>-->
+                    <!--<a href="#"> <i class="fab fa-hubspot"></i> <span>Manage</span> <span class="fa fa-angle-right" style="float: right"></span> </a>-->
+                    <!--<ul>-->
+                        <!--<li><a href="games">Games</a></li>-->
+                        <!--<li><a href="players">Players</a></li>-->
+                    <!--</ul>-->
+                <!--</li>-->
+                <!--<li id="menu-home" ><a href="vote321"><i class="fa fa-person-booth"></i><span>Vote 3-2-1</span></a></li>-->
+                <!--<li id="menu-home" ><a href="statistics"><i class="fas fa-flag-checkered"></i><span>Reports</span></a></li>-->
+                <!--<li id="menu-home" ><a href="logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a></li>-->
+            <!--</ul>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="clearfix"> </div>-->
+
+</div>
+<!--slide bar menu end here-->
+
+<!-- Modal Update Game -->
+<div class="modal fade" id="modalLoadData" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!--<div class="modal-header">-->
+            <!--<h5 class="modal-title" id="exampleModalLabel">Update Game</h5>-->
+            <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+            <!--<span aria-hidden="true">&times;</span>-->
+            <!--</button>-->
+            <!--</div>-->
+            <h5 id="BANNER" class="alert alert-warning modal-title" id="exampleModalLabel">Load Demo Data</h5>
+
+            <div id="data_load_status" style="
+                 padding-top: 20px;
+                 padding-left: 30px;
+                 padding-right: 30px;
+                 padding-bottom: 20px;
+            "></div>
+            <div class="modal-footer">
+                <button id="btn-close-load-demo-data" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button id="btn-load-demo-data" type="button" class="btn btn-primary">Load Data</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    var toggle = true;
+
+    $(".sidebar-icon").click(function() {
+        if (toggle)
+        {
+            $(".page-container").addClass("sidebar-collapsed").removeClass("sidebar-collapsed-back");
+            $("#menu span").css({"position":"absolute"});
+        }
+        else
+        {
+            $(".page-container").removeClass("sidebar-collapsed").addClass("sidebar-collapsed-back");
+            setTimeout(function() {
+                $("#menu span").css({"position":"relative"});
+            }, 400);
+        }
+        toggle = !toggle;
+    });
+</script>
+<!--scrolling js-->
+<script src="js/jquery.nicescroll.js"></script>
+<script src="js/scripts.js"></script>
+<!--//scrolling js-->
+<script src="js/bootstrap.js"> </script>
+<!-- mother grid end here-->
+</body>
+</html>

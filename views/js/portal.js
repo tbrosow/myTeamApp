@@ -1,32 +1,161 @@
-$(document).ready(function() {
+$(document).ready(function () {
+
+    $('#domain').on('change', function () {
+        $('#domain').css("color", "");
+    })
+    $('#btn-login').on('click', function () {
+        $('#domain').css("color", "");
+
+        if ($('#email').val() == '') {
+            validated = false;
+            $('#email').attr("placeholder", "Please enter your email here");
+        }
+
+        var valid = true;
+
+        if ($('#domain').val() == null) {
+                valid = false
+                $('#domain').css("color", "red");
+        }
+
+        if (!valid)
+            return false
+    });
 
     $('#mupdob').datepicker({
         changeMonth: true,
         changeYear: true,
         dateFormat: 'yy-mm-dd'
-    });
+    }).attr('readonly','true');
 
     $('#ug_gameday').datepicker({
         changeMonth: true,
         changeYear: true,
         dateFormat: 'yy-mm-dd'
-    });
+    }).attr('readonly','true');
 
     $('#ng_gameday').datepicker({
         changeMonth: true,
         changeYear: true,
         dateFormat: 'yy-mm-dd'
-    });
+    }).attr('readonly','true');
 
-    $( '#npdob').datepicker({
+    $('#npdob').datepicker({
         changeMonth: true,
         changeYear: true,
         dateFormat: 'yy-mm-dd'
-    });
+    }).attr('readonly','true');
 
-    $('#shirtSelector').on( 'click', 'a', function() {
+
+
+
+    $('#shirtSelector').on('click', 'a', function () {
 
         $('#npshirt').val($(this).html())
+    });
+
+
+
+    $('#modalLoadData').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        $("#btn-load-demo-data").css("display","")
+        $('.alert').each(function (elem) {
+            console.log("Delete " + $(this).attr('id'))
+            if ($(this).attr('id') != "BANNER")
+            $(this).remove()
+        })
+    })
+
+    function loadPlayers() {
+        let stat = {};
+        let date = new Date();
+        stat.start = date.getMilliseconds();
+
+        $.ajax({
+            type: 'PUT',
+            url: '/dd_load_players/',
+            data: {}
+        }).done(function (response) {
+            console.log(response);
+            let date = new Date();
+            stat.t1 = date.getMilliseconds();
+            let ms = stat.t1 - stat.start;
+            $('#data_load_status').append("<div id=\"PLAYERSINFO\" class=\"alert alert-info\" role=\"alert\">" + response + " ... took (" + ms + " msec) </div>")
+
+            loadGames(stat)
+        }).fail(function (response) {
+            console.log("Oops not working");
+        });
+    }
+
+    function loadVotes(stat) {
+        let date = new Date();
+        stat.start3 = date.getMilliseconds();
+        $.ajax({
+            type: 'PUT',
+            url: '/dd_load_votes/',
+            data: {}
+        }).done(function (response) {
+            console.log(response);
+            let date = new Date();
+            stat.t3 = date.getMilliseconds();
+            let ms = stat.t3 - stat.start3;
+            $('#data_load_status').append("<div id=\"VOTESINFO\" class=\"alert alert-info\" role=\"alert\">" + response + " ... took (" + ms + " msec) </div>")
+        }).fail(function (response) {
+            console.log("Oops not working");
+        });
+    }
+
+    function loadGames(stat) {
+
+        let date = new Date();
+        stat.start2 = date.getMilliseconds();
+        $.ajax({
+            type: 'PUT',
+            url: '/dd_load_games/',
+            data: {}
+        }).done(function (response) {
+            console.log(response);
+            let date = new Date();
+            stat.t2 = date.getMilliseconds();
+            let ms = stat.t2 - stat.start2;
+            $('#data_load_status').append("<div id=\"GAMESINFO\" class=\"alert alert-info\" role=\"alert\">" + response + " ... took (" + ms + " msec) </div>")
+            loadVotes(stat)
+            $("#btn-load-demo-data").css("display","none")
+        }).fail(function (response) {
+            console.log("Oops not working");
+        });
+    }
+
+    $('#btn-close-load-demo-data').on('click', function () {
+
+        console.log("Delete Game")
+        location.reload()
+
+        //$('#value').text( $('#newGoal').val() );
+        // $('#modalDeleteGame').modal('hide');
+        return false;
+    });
+
+    $('#btn-load-demo-data').on('click', function () {
+
+        console.log("Delete Game")
+        $.ajax({
+            type: 'PUT',
+            url: '/dd_delete/',
+            data: {
+            }
+        }).done(function (response) {
+            console.log(response);
+            loadPlayers();
+
+        }).fail(function (response) {
+            console.log("Oops not working");
+        });
+
+        //$('#value').text( $('#newGoal').val() );
+        // $('#modalDeleteGame').modal('hide');
+        return false;
     });
 
 
@@ -37,12 +166,12 @@ $(document).ready(function() {
             _id: button.data('_id'),
             number: button.data('number'),
             location: button.data('location'),
-            oponent: button.data('oponent'),
+            team: button.data('team'),
             homegame: "" + button.data('homegame'),
             result: button.data('result'),
             goalsscored: button.data('goalsscored'),
             goalsconceded: button.data('goalsconceded'),
-            gameday:button.data('gameday')
+            gameday: button.data('gameday')
             // mobile: button.data('mobile')
         }
         // alert("GAME "+JSON.stringify(gameObj))
@@ -54,7 +183,7 @@ $(document).ready(function() {
         modal.find('#ug_result').val(gameObj.result)
         modal.find('#ug_homegame').val(gameObj.homegame)
         // modal.find('#ug_homegame').val("true")
-        modal.find('#ug_oponent').val(gameObj.oponent)
+        modal.find('#ug_team').val(gameObj.team)
         modal.find('#ug_goalsscored').val(gameObj.goalsscored)
         modal.find('#ug_goalsconceded').val(gameObj.goalsconceded)
         // modal.find('#mupdob').val(userObj.dob)
@@ -62,21 +191,22 @@ $(document).ready(function() {
         // modal.find('#mupmobile').val(userObj.mobile)
         modal.find('#ug_id').val(gameObj._id)
     })
+
     $('#modalDeleteGame').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget); // Button that triggered the modal
 
         var gameObj = {
             _id: button.data('_id'),
             number: button.data('number'),
-            oponent: button.data('oponent')
+            team: button.data('team')
         }
 
         var modal = $(this)
-        modal.find('.modal-title').text('Delete Game # ' + gameObj.number + " (" + gameObj.oponent+ ")")
+        modal.find('.modal-title').text('Delete Game # ' + gameObj.number + " (" + gameObj.team + ")")
         modal.find('#dg_id').val(gameObj._id)
     })
 
-    $('#btn-new-game').on('click', function() {
+    $('#btn-new-game').on('click', function () {
 
         console.log("Btn New Game")
         var valid = true;
@@ -85,9 +215,9 @@ $(document).ready(function() {
             valid = false
             $('#ng_location').attr("placeholder", "Please enter a ground or oval");
         }
-        if ($('#ng_oponent').val().length < 1) {
+        if ($('#ng_team').val().length < 1) {
             valid = false
-            $('#ng_oponent').attr("placeholder", "Please enter a team");
+            $('#ng_team').attr("placeholder", "Please enter a team");
         }
         if ($('#ng_gameday').val().length < 1) {
             valid = false
@@ -98,19 +228,19 @@ $(document).ready(function() {
             return false
 
         $.ajax({
-            type:'PUT',
+            type: 'PUT',
             url: '/createGame',
             data: {
                 number: $('#ng_number').val(),
                 homegame: $('#ng_homegame').val(),
                 location: $('#ng_location').val(),
-                oponent: $('#ng_oponent').val(),
+                team: $('#ng_team').val(),
                 gameday: $('#ng_gameday').val()
             }
-        }).done(function(response){
+        }).done(function (response) {
             console.log(response);
             location.reload();
-        }).fail(function(response){
+        }).fail(function (response) {
             console.log("Oops not working");
         });
 
@@ -118,21 +248,21 @@ $(document).ready(function() {
         $('#modalNewGame').modal('hide');
         return false;
     });
-    $('#btn-update-game-score').on('click', function() {
+    $('#btn-update-game-score').on('click', function () {
 
         console.log("Update Game Score - Save")
         $.ajax({
-            type:'PUT',
+            type: 'PUT',
             url: '/updateGame',
             data: {
-                _id:$('#ug_id').val(),
-                goalsscored:$('#ug_goalsscored').val(),
+                _id: $('#ug_id').val(),
+                goalsscored: $('#ug_goalsscored').val(),
                 goalsconceded: $('#ug_goalsconceded').val()
             }
-        }).done(function(response){
+        }).done(function (response) {
             console.log(response);
             location.reload();
-        }).fail(function(response){
+        }).fail(function (response) {
             console.log("Oops not working");
         });
 
@@ -140,26 +270,26 @@ $(document).ready(function() {
         $('#modalUpdateGame').modal('hide');
         return false;
     });
-    $('#btn-update-game').on('click', function() {
+    $('#btn-update-game').on('click', function () {
 
         console.log("Update Game - Save")
         $.ajax({
-            type:'PUT',
+            type: 'PUT',
             url: '/updateGame',
             data: {
-                _id:$('#ug_id').val(),
-                goalsscored:$('#ug_goalsscored').val(),
+                _id: $('#ug_id').val(),
+                goalsscored: $('#ug_goalsscored').val(),
                 goalsconceded: $('#ug_goalsconceded').val(),
                 homegame: $('#ug_homegame').val(),
                 location: $('#ug_location').val(),
-                oponent: $('#ug_oponent').val(),
+                team: $('#ug_team').val(),
                 number: $('#ug_number').val(),
                 gameday: $('#ug_gameday').val()
             }
-        }).done(function(response){
+        }).done(function (response) {
             console.log(response);
             location.reload();
-        }).fail(function(response){
+        }).fail(function (response) {
             console.log("Oops not working");
         });
 
@@ -167,11 +297,11 @@ $(document).ready(function() {
         $('#modalUpdateGame').modal('hide');
         return false;
     });
-    $('#btn-delete-game').on('click', function() {
+    $('#btn-delete-game').on('click', function () {
 
-        var id = "G_"+ $('#dg_id').val();
+        var id = "G_" + $('#dg_id').val();
 
-        $('tr').each( function(elem) {
+        $('tr').each(function (elem) {
             if (id == $(this).attr('id')) {
                 console.log("Delete " + $(this).attr('id'))
                 $(this).remove()
@@ -180,15 +310,15 @@ $(document).ready(function() {
 
         console.log("Delete Game" + $('#dg_id').val())
         $.ajax({
-            type:'PUT',
+            type: 'PUT',
             url: '/deleteGame/',
             data: {
                 _id: $('#dg_id').val()
             }
-        }).done(function(response){
+        }).done(function (response) {
             console.log(response);
             location.reload();
-        }).fail(function(response){
+        }).fail(function (response) {
             console.log("Oops not working");
         });
 
@@ -238,7 +368,7 @@ $(document).ready(function() {
         modal.find('#dp_id').val(userObj._id)
     })
 
-    $('#btn-new-player').on('click', function() {
+    $('#btn-new-player').on('click', function () {
         var validated = true;
         if ($('#npmobile').val() == '') {
             validated = false;
@@ -274,20 +404,20 @@ $(document).ready(function() {
 
         console.log("CP Save")
         $.ajax({
-            type:'PUT',
+            type: 'PUT',
             url: '/newPlayer/',
             data: {
-                shirt:$('#npshirt').val(),
+                shirt: $('#npshirt').val(),
                 firstname: $('#npfirstname').val(),
                 lastname: $('#nplastname').val(),
                 dob: $('#npdob').val(),
                 email: $('#npemail').val(),
                 mobile: $('#npmobile').val()
             }
-        }).done(function(response){
+        }).done(function (response) {
             console.log(response);
             location.reload();
-        }).fail(function(response){
+        }).fail(function (response) {
             console.log("Oops not working");
         });
 
@@ -295,25 +425,25 @@ $(document).ready(function() {
         $('#modalNewPlayer').modal('hide');
         return false;
     });
-    $('#btn-update-player').on('click', function() {
+    $('#btn-update-player').on('click', function () {
 
         console.log("MUP Save")
         $.ajax({
-            type:'PUT',
+            type: 'PUT',
             url: '/updatePlayer',
             data: {
-                _id:$('#mup_id').val(),
-                shirt:$('#mupshirt').val(),
+                _id: $('#mup_id').val(),
+                shirt: $('#mupshirt').val(),
                 firstname: $('#mupfirstname').val(),
                 lastname: $('#muplastname').val(),
                 dob: $('#mupdob').val(),
                 email: $('#mupemail').val(),
                 mobile: $('#mupmobile').val()
             }
-        }).done(function(response){
+        }).done(function (response) {
             console.log(response);
             location.reload()
-        }).fail(function(response){
+        }).fail(function (response) {
             console.log("Oops not working");
         });
 
@@ -321,19 +451,19 @@ $(document).ready(function() {
         $('#modalUpdatePlayer').modal('hide');
         return false;
     });
-    $('#btn-delete-player').on('click', function() {
+    $('#btn-delete-player').on('click', function () {
 
         console.log("Delete Player")
         $.ajax({
-            type:'PUT',
+            type: 'PUT',
             url: '/deletePlayer/',
             data: {
-                _id:$('#dp_id').val()
+                _id: $('#dp_id').val()
             }
-        }).done(function(response){
+        }).done(function (response) {
             console.log(response);
             // window.location.replace('http://localhost:3030/');
-        }).fail(function(response){
+        }).fail(function (response) {
             console.log(response);
             location.reload()
         });
@@ -363,7 +493,7 @@ $(document).ready(function() {
                     }
 
                     data.push(value)
-                    label.push("#" + game.number + " " + game.oponent + " " + game.result)
+                    label.push("#" + game.number + " " + game.team + " " + game.result)
                 }
             });
 
@@ -499,21 +629,26 @@ $(document).ready(function() {
 
     var toggle = true;
 
-    $(".sidebar-icon").click(function() {
-        if (toggle)
-        {
+    $(".sidebar-icon").click(function () {
+        if (toggle) {
             $(".page-container").addClass("sidebar-collapsed").removeClass("sidebar-collapsed-back");
-            $("#menu span").css({"position":"absolute"});
+            $("#menu span").css({"position": "absolute"});
         }
-        else
-        {
+        else {
             $(".page-container").removeClass("sidebar-collapsed").addClass("sidebar-collapsed-back");
-            setTimeout(function() {
-                $("#menu span").css({"position":"relative"});
+            setTimeout(function () {
+                $("#menu span").css({"position": "relative"});
             }, 400);
         }
         toggle = !toggle;
     });
 
+    function displayDate(_inDate) {
+        let newDate = new Date(_inDate);
+        let day = ("0" + newDate.getDate()).slice(-2);
+        let month = ("0" + (newDate.getMonth()+1)).slice(-2);
+        return (newDate.getFullYear() + "-" + month + "-" + day);
+
+    }
 });
 

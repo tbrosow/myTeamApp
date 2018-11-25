@@ -35,6 +35,24 @@ router.get('/', function (req, res, next) {
 
 // PAGES
 
+router.get('/properties', function (req, res, next) {
+    User.findById(req.session.userId).exec(function (error, user) {
+        if (error) {
+            return res.render('notfound');
+        } else {
+            if (user === null) {
+                var err = new Error('Not authorized! Go back!');
+                err.status = 400;
+                res.redirect('/login');
+            } else {
+                getData(req, res, "properties", {user: user});
+
+
+            }
+        }
+    });
+});
+
 router.get('/games', function (req, res, next) {
     User.findById(req.session.userId).exec(function (error, user) {
         if (error) {
@@ -156,7 +174,14 @@ router.post('/login', function (req, res, next) {
                 res.render('login', { error: {msg: "Wrong email or password."}});
             } else {
                 req.session.userId = user._id;
-                return res.redirect('/portal');
+                req.session.domainId = req.body.domain;
+                Domain.find({_id: req.session.domainId}, function (err, domains) {
+                    if (domains.length > 0) {
+                        req.session.domainName = domains[0].name;
+                    }
+                    return res.redirect('/portal');
+                })
+
             }
         });
     } else {
@@ -177,25 +202,36 @@ router.post('/register', function (req, res, next) {
     
         if (req.body.email && req.body.username && req.body.password && req.body.passwordConf) {
 
-            Team.find({name:req.body.team}, function (error, team) {
-                if (team.length <= 0) {
-                    res.render('register', { fields: fields, error: {msg: "Team " + req.body.team + " is not registered. Please check with your team manager and try again"}});
+            Domain.find({name:req.body.team}, function (error, domain) {
+                if (domain.length > 0) {
+                    res.render('register', { fields: fields, error: {msg: "Team " + req.body.team + " is already registered. Please check with your team manager and try again"}});
                 } else {
-                    var userData = {
-                        email: req.body.email,
-                        username: req.body.username,
-                        password: req.body.password,
-                        passwordConf: req.body.passwordConf,
+                    let domainData = {
+                        name: req.body.team
                     }
 
-                    User.create(userData, function (error, user) {
-                        if (error) {
-                            res.render('register', { fields: fields, error: {msg: "User already registered with this email address"}});
-                        } else {
-                            req.session.userId = user._id;
-                            return res.redirect('/portal');
+                    Domain.create(domainData, function (err, domain) {
+                        var userData = {
+                            email: req.body.email,
+                            username: req.body.username,
+                            password: req.body.password,
+                            passwordConf: req.body.passwordConf,
+                            domain: {
+                                id: domain._id,
+                                display: domain.name
+                            }
                         }
-                    });
+                        User.create(userData, function (error, user) {
+                            if (error) {
+                                res.render('register', { fields: fields, error: {msg: "User already registered with this email"}});
+                            } else {
+                                req.session.userId = user._id;
+                                req.session.domainId = domain._id;
+                                req.session.domainName = domain.name;
+                                return res.redirect('/portal');
+                            }
+                        });
+                    })
                 }
             });
 
@@ -241,7 +277,13 @@ router.get('/logout', function (req, res, next) {
 
 
 
+function displayDate(_inDate) {
+    let newDate = new Date(_inDate);
+    let day = ("0" + newDate.getDate()).slice(-2);
+    let month = ("0" + (newDate.getMonth()+1)).slice(-2);
+    return (newDate.getFullYear() + "-" + month + "-" + day);
 
+}
 
 // MONGO GET DATA FOR THE FRONTEND
 function getData(req, res, _page, _options) {
@@ -250,11 +292,14 @@ function getData(req, res, _page, _options) {
     var stat = {gamesPlayed:0};
     var gamesVoted = [];
     var gamesPlayed = [];
+
+    console.log(_page + " Session: " + JSON.stringify(req.session, null, 4))
+
     Property.find({}, function( err, props) {
         User.find({}, function (err, users) {
             console.log(_page + " Users: " + JSON.stringify(users, null, 4))
 
-            Game.find({}, function (err, games) {
+            Game.find({'domain.id': req.session.domainId}, function (err, games) {
                 console.log(_page + " Games: " + JSON.stringify(games, null, 4))
                 games.forEach(function (game) {
                     if (game.played) {
@@ -268,7 +313,7 @@ function getData(req, res, _page, _options) {
                         gamesPlayed.push(game)
                     }
                 })
-                Player.find({}, function (err, players) {
+                Player.find({'domain.id': req.session.domainId}, function (err, players) {
                     for (var idx = 0; idx < games.length; idx++) {
                         if (games[idx].result != "") {
                             stat.gamesPlayed++;
@@ -282,6 +327,7 @@ function getData(req, res, _page, _options) {
                                 props.forEach(function (prop) {
                                     if (prop.name == "page.title." + _page) {
                                         template.html = template.html.replace(/\{\{HEADER\}\}/, prop.value)
+                                        template.html = template.html.replace(/\{\{DOMAIN_NAME\}\}/, req.session.domainName)
                                     }
                                 })
                             }
@@ -335,12 +381,24 @@ router.get('/getDomains', function (req, res, next) {
     })
 });
 
+router.get('/freeDomains', function (req, res, next) {
+
+   console.log("/freeDomains team: [" + req.query.team + "]")
+
+    Domain.find({name: req.query.team}, function(err, domains) {
+        if (err)
+            console.log("/freeDomains Err: [" + err + "]")
+        console.log("/freeDomains Domains: [" + domains.length + "]")
+        res.send({domains: domains.length})
+    })
+});
+
 router.get('/getGames', function (req, res, next) {
 
     console.log("/getGames Game: [" + req.query.game + "]")
     var voter = [];
 
-    Game.find({played: true}, function (error, games) {
+    Game.find({'domain.id': req.session.domainId, played: true}, function (error, games) {
         console.log("/getGames: Games: " + JSON.stringify(games));
 
         function compare(a,b) {
@@ -362,10 +420,10 @@ router.get('/getVoter', function (req, res, next) {
     console.log("/getVoter Game: [" + req.query.game + "]")
     var voter = [];
 
-    Player.find({}, function (error, players) {
+    Player.find({'domain.id': req.session.domainId }, function (error, players) {
         console.log("/getVoter: Players: " + JSON.stringify(players));
 
-        Vote.find({game: req.query.game}, function (error, votes) {
+        Vote.find({'domain.id': req.session.domainId, game: req.query.game}, function (error, votes) {
 
             players.forEach(function (player) {
                 var voted = false;
@@ -399,7 +457,11 @@ router.put('/createVote', function (req, res, next) {
         silver: req.body.silver,
         bronze: req.body.bronze,
         game: req.body.game,
-        not_played: req.body.not_played || false
+        not_played: req.body.not_played || false,
+        domain: {
+            id: req.session.domainId,
+            display: req.session.domainName
+        }
 
     };
 
@@ -407,10 +469,10 @@ router.put('/createVote', function (req, res, next) {
         if (error) console.log(error);
         console.log("/createVote: "+JSON.stringify(votes))
 
-        Player.find({}, function (error, players) {
+        Player.find({'domain.id': req.session.domainId}, function (error, players) {
             console.log("/createVote: Players: " + JSON.stringify(players));
 
-            Vote.find({game: req.body.game}, function (error, votes) {
+            Vote.find({'domain.id': req.session.domainId, game: req.body.game}, function (error, votes) {
 
                 players.forEach(function (player) {
                     var voted = false;
@@ -447,14 +509,14 @@ router.get('/getStatistics', function (req, res, next) {
     console.log("/getStatistics Game: [" + req.query.game + "]")
     var data = [];
 
-    Player.find({}, function (error, players) {
+    Player.find({'domain.id': req.session.domainId}, function (error, players) {
         console.log("/getStatistics: Players: " + JSON.stringify(players));
-        var query = {};
+        var query = {'domain.id': req.session.domainId};
         if (req.query.game != "all") {
-            query = {game: req.query.game};
+            query.game = req.query.game;
         }
         Vote.find(query, function (error, votes) {
-
+            console.log("/getStatistics: Votes: " + JSON.stringify(votes));
             players.forEach(function(player) {
 
                 var tmpPlayer = JSON.parse(JSON.stringify(player));
@@ -463,7 +525,7 @@ router.get('/getStatistics', function (req, res, next) {
                 votes.forEach(function (vote) {
                     // console.log("/getStatistics: vote: " + JSON.stringify(vote));
                     if (!vote.not_played) {
-                        console.log("/getStatistics: tmpPlayer: " + tmpPlayer._id + " " + vote.gold);
+                        //console.log("/getStatistics: tmpPlayer: " + tmpPlayer._id + " " + vote.gold);
                         if (String(tmpPlayer._id) == vote.gold) {
                             tmpPlayer.counter += 3;
                         }
@@ -505,9 +567,13 @@ router.put('/createGame', function (req, res, next) {
     var gameData = {
         homegame: req.body.homegame == "true" ? true : false,
         location: req.body.location,
-        oponent: req.body.oponent,
+        team: req.body.team,
         number: req.body.number,
-        gameday: req.body.gameday
+        gameday: convertDate(req.body.gameday),
+        domain: {
+            id: req.session.domainId,
+            display: req.session.domainName
+        }
     };
 
     Game.create(gameData, function (error, game) {
@@ -524,10 +590,10 @@ router.put('/updateGame', function (req, res, next) {
 
     if (req.body.location)
         gameData.location = req.body.location;
-    if (req.body.oponent)
-        gameData.oponent = req.body.oponent;
+    if (req.body.team)
+        gameData.team = req.body.team;
     if (req.body.gameday)
-        gameData.gameday = req.body.gameday;
+        gameData.gameday = convertDate(req.body.gameday);
     if (req.body.number)
         gameData.number = req.body.number;
     if (req.body.homegame)
@@ -564,9 +630,13 @@ router.put('/newPlayer', function (req, res, next) {
         firstname: req.body.firstname,
         lastname: req.body.lastname,
         shirt: req.body.shirt,
-        dob: req.body.dob,
+        dob: convertDate(req.body.dob),
         email: req.body.email,
-        mobile: req.body.mobile
+        mobile: req.body.mobile,
+        domain: {
+            id: req.session.domainId,
+            display: req.session.domainName
+        }
     };
 
     Player.create(playerData, function (error, player) {
@@ -576,14 +646,20 @@ router.put('/newPlayer', function (req, res, next) {
     });
 });
 
+function convertDate(_inDate) {
+    let date = new Date(_inDate);
+    return date.toUTCString()
+}
+
 router.put('/updatePlayer', function (req, res, next) {
     console.log("/updatePlayer: " + JSON.stringify(req.body))
+
 
     var playerData = {
         firstname: req.body.firstname,
         lastname: req.body.lastname,
         shirt: req.body.shirt,
-        dob: req.body.dob,
+        dob: convertDate(req.body.dob),
         email: req.body.email,
         mobile: req.body.mobile
 
@@ -606,10 +682,364 @@ router.put('/deletePlayer', function (req, res, next) {
     });
 });
 
+router.put('/dd_load_games', function (req, res, next) {
+    console.log("/dd_load_games: " + JSON.stringify(req.session))
+    let games = [
+        {
+            "gameday": "23-May-2018",
+            "team": "Woy Woy",
+            "homegame": true,
+            "location": "Central Coast Stadium"
+        },
+        {
+            "gameday": "15-April-2018",
+            "team": "Ettalong",
+            "homegame": true,
+            "location": "Duffys Oval (TER)"
+        },
+        {
+            "gameday": "16-April-2018",
+            "team": "Avoca",
+            "homegame": true,
+            "location": "Gavenlock Oval (GOS)"
+        },
+        {
+            "gameday": "29-May-2018",
+            "team": "Gosford",
+            "homegame": true,
+            "location": "Duffys Oval (TER)"
+        },
+        {
+            "gameday": "09-July-2018",
+            "team": "East Gosford",
+            "homegame": true,
+            "location": "Central Coast Stadium"
+        },
+        {
+            "gameday": "03-April-2018",
+            "team": "Woy Woy",
+            "homegame": false,
+            "location": "Gavenlock Oval (GOS)"
+        },
+        {
+            "gameday": "06-April-2018",
+            "team": "Ettalong",
+            "homegame": false,
+            "location": "Duffys Oval (TER)"
+        },
+        {
+            "gameday": "30-April-2018",
+            "team": "Avoca",
+            "homegame": false,
+            "location": "Central Coast Stadium"
+        },
+        {
+            "gameday": "26-July-2018",
+            "team": "Gosford",
+            "homegame": false,
+            "location": "Gavenlock Oval (GOS)"
+        },
+        {
+            "gameday": "02-May-2018",
+            "team": "East Gosford",
+            "homegame": false,
+            "location": "Central Coast Stadium"
+        }
+    ]
+
+    let number=1
+    games.forEach(function (gameData) {
+
+        gameData.domain = {
+            id: req.session.domainId,
+            display: req.session.domainName
+        }
+        gameData.number = number++;
+
+        Game.create(gameData, function (error, game) {
+            if (error) console.log(error);
+            console.log("/newGame: " + JSON.stringify(game))
+
+        });
+    })
+    res.send("Games loaded");
+});
+
+router.put('/dd_load_votes', function (req, res, next) {
+    let voteCount = 0;
+    Player.find({'domain.id': req.session.domainId}, function (err, players) {
+        Player.find({'domain.id': req.session.domainId}, function (err, gold) {
+            console.log("/newGame: PRE" + gold.length)
+            Player.find({'domain.id': req.session.domainId}, function (err, silver) {
+                Player.find({'domain.id': req.session.domainId}, function (err, bronze) {
+                    Game.find({'domain.id': req.session.domainId}, function (err, games) {
+                        games.forEach(function (game) {
+                            gs = Math.floor(Math.random() * 4) + 1;
+                            gc = Math.floor(Math.random() * 3) + 1;
+                            let gameData = {
+                                goalsscored: gs,
+                                goalsconceded: gc,
+                                played: true,
+                                voted: true,
+                                result: gs + ":" + gc
+                            }
+                            console.log("/newGame: PRE" + JSON.stringify(gameData))
+                            Game.update({_id: game._id}, gameData, function (err, game) {
+                                console.log("/newGame: POST" + JSON.stringify(game))
+                            })
+                            players.forEach(function (player) {
+
+                            })
+
+                            players.forEach(function(voter) {
+                                sd = [];
+                                let vp = Math.floor(Math.random() * 17) + 1
+                                let gp = Math.floor(Math.random() * 17) + 1
+                                let sp = Math.floor(Math.random() * 17) + 1
+                                let bp = Math.floor(Math.random() * 17) + 1
+                                console.log("/SCORE: POST" + vp + " " + gp + " " + sp + " " + bp)
+                                let scoreData = {
+                                    gold: gold[gp]._id,
+                                    silver: silver[sp]._id,
+                                    bronze: bronze[bp]._id,
+                                    voter: voter._id,
+                                    game: game._id
+                                }
+                                scoreData.domain = {
+                                    id: req.session.domainId,
+                                    display: req.session.domainName
+                                }
+                                sd.push(scoreData)
+//                                console.log("/scoreData: scoreData" + JSON.stringify(scoreData))
+                                sd.forEach(function (sdd) {
+                                    Vote.create(sdd, function (error, voteData) {
+                                        if (error) console.log(error);
+                                        voteCount++;
+                                    })
+                                })
+
+                            })
+
+                        })
+                        res.send("Votes generated ")
+                    }).sort({gameday:-1}).limit( 6 )
+                })
+            })
+        })
+    })
+});
+
+router.put('/dd_load_players', function (req, res, next) {
+    console.log("/dd_load_players: " + JSON.stringify(req.session))
+    let players = [
+        {
+            "shirt": 15,
+            "firstname": "Steve",
+            "lastname": "Austin",
+            "dob": "30-May-1964",
+            "mobile": "046571995",
+            "email": "Steve.Austin@gmail.com",
+            "ff_number": 54634704
+        },
+        {
+            "shirt": 18,
+            "firstname": "Mark",
+            "lastname": "Bowers",
+            "dob": "17-November-1968",
+            "mobile": "046571022",
+            "email": "Mark.Bowers@gmail.com",
+            "ff_number": 63766596
+        },
+        {
+            "shirt": 8,
+            "firstname": "Paul",
+            "lastname": "Brandham",
+            "dob": "02-October-1970",
+            "mobile": "046571694",
+            "email": "Paul.Brandham@gmail.com",
+            "ff_number": 61142865
+        },
+        {
+            "shirt": 11,
+            "firstname": "Torsten",
+            "lastname": "Brosow",
+            "dob": "07-February-1960",
+            "mobile": "046571959",
+            "email": "Torsten.Brosow@gmail.com",
+            "ff_number": 63776710
+        },
+        {
+            "shirt": 10,
+            "firstname": "Mark",
+            "lastname": "Croft",
+            "dob": "05-January-1970",
+            "mobile": "046571776",
+            "email": "Mark.Croft@gmail.com",
+            "ff_number": 80535396
+        },
+        {
+            "shirt": 19,
+            "firstname": "Adam",
+            "lastname": "Dabin",
+            "dob": "05-August-1962",
+            "mobile": "046571704",
+            "email": "Adam.Dabin@gmail.com",
+            "ff_number": 75265207
+        },
+        {
+            "shirt": 14,
+            "firstname": "Paul",
+            "lastname": "Darbin",
+            "dob": "15-May-1970",
+            "mobile": "046571643",
+            "email": "Paul.Darbin@gmail.com",
+            "ff_number": 65827941
+        },
+        {
+            "shirt": 7,
+            "firstname": "Luigi",
+            "lastname": "Genovese",
+            "dob": "16-October-1966",
+            "mobile": "046571059",
+            "email": "Luigi.Genovese@gmail.com",
+            "ff_number": 59479063
+        },
+        {
+            "shirt": 12,
+            "firstname": "Brett",
+            "lastname": "Green",
+            "dob": "09-February-1968",
+            "mobile": "046571116",
+            "email": "Brett.Green@gmail.com",
+            "ff_number": 54658711
+        },
+        {
+            "shirt": 6,
+            "firstname": "Anthony",
+            "lastname": "Johnson",
+            "dob": "10-November-1963",
+            "mobile": "046571261",
+            "email": "Anthony.Johnson@gmail.com",
+            "ff_number": 63776751
+        },
+        {
+            "shirt": 17,
+            "firstname": "Darren",
+            "lastname": "Kimber",
+            "dob": "25-August-1967",
+            "mobile": "046571412",
+            "email": "Darren.Kimber@gmail.com",
+            "ff_number": 43808195
+        },
+        {
+            "shirt": 3,
+            "firstname": "Robert",
+            "lastname": "McLeod",
+            "dob": "13-December-1966",
+            "mobile": "046571341",
+            "email": "Robert.McLeod@gmail.com",
+            "ff_number": 63776744
+        },
+        {
+            "shirt": 20,
+            "firstname": "Jon",
+            "lastname": "Williams",
+            "dob": "24-May-1966",
+            "mobile": "046571840",
+            "email": "Jon.Williams@gmail.com",
+            "ff_number": 79973087
+        },
+        {
+            "shirt": 16,
+            "firstname": "Gavin",
+            "lastname": "Robinson",
+            "dob": "18-October-1963",
+            "mobile": "046571588",
+            "email": "Gavin.Robinson@gmail.com",
+            "ff_number": 75015321
+        },
+        {
+            "shirt": 9,
+            "firstname": "Stephen",
+            "lastname": "Shields",
+            "dob": "03-July-1963",
+            "mobile": "046571797",
+            "email": "Stephen.Shields@gmail.com",
+            "ff_number": 63776553
+        },
+        {
+            "shirt": 1,
+            "firstname": "Darren",
+            "lastname": "Sloane",
+            "dob": "12-June-1970",
+            "mobile": "046571940",
+            "email": "Darren.Sloane@gmail.com",
+            "ff_number": 43814011
+        },
+        {
+            "shirt": 2,
+            "firstname": "Wayne",
+            "lastname": "Stokeld",
+            "dob": "18-August-1970",
+            "mobile": "046571348",
+            "email": "Wayne.Stokeld@gmail.com",
+            "ff_number": 66297276
+        },
+        {
+            "shirt": 5,
+            "firstname": "Antony",
+            "lastname": "Wardle",
+            "dob": "28-September-1961",
+            "mobile": "046571446",
+            "email": "Antony.Wardle@gmail.com",
+            "ff_number": 54656350
+        }
+    ];
+
+    players.forEach(function (playerData) {
+        playerData.domain = {
+            id: req.session.domainId,
+            display: req.session.domainName
+        }
+
+        Player.create(playerData, function (error, player) {
+            if (error) console.log(error);
+            console.log("/dd_load_players: " + JSON.stringify(player))
+
+        });
+    })
+    res.send("Players loaded");
+});
+
+router.put('/dd_delete', function (req, res, next) {
+
+    console.log("/dd_delete: " + JSON.stringify(req.session))
+    let data = {};
+
+    Game.remove({'domain.id': req.session.domainId}, function (err, resp) {
+
+        console.log("/del loadDemoData: " + JSON.stringify(resp))
+        data.games_deleted = resp.n;
+
+        Player.remove({'domain.id': req.session.domainId}, function (err, resp) {
+
+            console.log("/del loadDemoData: " + JSON.stringify(resp))
+            data.players_deleted = resp.n;
+
+            Vote.remove({'domain.id': req.session.domainId}, function (err, resp) {
+
+                console.log("/del loadDemoData: " + JSON.stringify(resp))
+                data.votes_deleted = resp.n;
+                res.send(data)
+            });
+        });
+    });
+});
+
 module.exports = router;
 
 router.get('/user', function( req, res) {
-    User.find({}, function (err, data) {
+    User.find({'domain.id': req.session.domainId}, function (err, data) {
         res.json(data)
     })
 });

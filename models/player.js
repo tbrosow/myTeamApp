@@ -4,7 +4,7 @@ var bcrypt = require('bcrypt');
 var Schema = new mongoose.Schema({
   shirt: {
     type: Number,
-    unique: true,
+    unique: false,
     required: true,
     trim: true
   },
@@ -37,8 +37,14 @@ var Schema = new mongoose.Schema({
     unique: false,
     required: true,
     trim: true
-  }
-
+  }, domain: {
+        id: {
+            type: String
+        },
+        display: {
+            type: String
+        }
+    }
 });
 
 var Player = mongoose.model('Player', Schema);

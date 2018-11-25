@@ -72,7 +72,10 @@
                     <div class="col-md-12 chit-chat-layer1-left">
                         <div class="alert alert-info" role="alert">
                             Vote Man of the Match
+
+                            <br/>You need to score a game before you can vote on it
                         </div>
+
                         <form>
                             <div class="form-group">
                                 <label for="gameSelector">Game:</label>
@@ -80,8 +83,10 @@
                                     <option disabled selected value> -- Select a game -- </option>
                                     <%
                                     gamesPlayed.forEach(function(game) {
+                                        if (!game.voted) {
 
-                                    %> <option value="<%= game._id %>"> <%= game.number %> <%= game.oponent %> <%= game.gameday %> <%= game.goalsscored %> : <%= game.goalsconceded %> </option> <%
+                                    %> <option value="<%= game._id %>"> #<%= game.number %>  <%= game.team %> <%= game.gameday %> <%= game.goalsscored %> : <%= game.goalsconceded %> </option> <%
+                                        }
                                     });
                                     %>
 

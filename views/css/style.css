@@ -282,11 +282,34 @@ a:hover {
     text-decoration: none;
 }
 .logo-name  h1 a{
-	 color: #910048;
+    color: #910048;
 }
 .logo-name a {
     display:inline-block;
 }
+
+.domain-name {
+    float: right;
+    /*width: 30%;*/
+    margin: 0% 3% 0% 2%;
+}
+
+.domain-name h1 {
+    font-size: 2.5em;
+    color: #337AB7;
+    margin: 0em;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.domain-name  h1 a {
+    color: #48e361;
+}
+
+.domain-name a {
+    display:inline-block;
+}
+
 .nav > li > a:hover, .nav > li > a:focus {
     background: none !important;
 }
@@ -1766,8 +1789,8 @@ p.grid1 {
 .login-head h1 {
     font-size:3em;
      color:#FFF;
-    padding: 1em 0em 0em 0em;
-    text-align: center;
+    padding: 1em 1em 0em 0em;
+    text-align: right;
     font-family: 'Carrois Gothic', sans-serif;
 }
 .login-block {
@@ -3498,17 +3521,31 @@ div#geoChart {
     text-align: center;
 }	
 /*--logoname--*/
-.logo-name {
+.logo-name1 {
     width: 39%;
     margin: 0% 1% 0% 0%;
 }
 .search-box {
     width: 60%;
 }
-.logo-name h1 {
-    font-size: 1.7em;
+
+    .logo-name1 h1 {
+        font-size: 1.7em;
         margin-top: 0.3em;
-}
+    }
+
+    .domain-name {
+        float: right;
+        width: 39%;
+        margin: 0% 1% 0% 0%;
+    }
+
+    .domain-name h1 {
+
+        font-size: 1.7em;
+        margin-top: 0.3em;
+    }
+
 .search-box input[type="text"] {
     width: 80%;
 }

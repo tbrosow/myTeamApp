@@ -41,10 +41,13 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 <% } %>
 				<input type="text" name="email" placeholder="E-mail" required="" value="<%= fields.email %>">
                 <input type="text" name="username" placeholder="Username" required="">
-                <input type="text" name="team" placeholder="Team" required="">
+                <input type="text" id="team" name="team" placeholder="Team" required="">
+					<div id="team_alert" class="alert alert-info" role="alert" style="display: none">
+sss
+					</div>
 				<input type="password" name="password" placeholder="Password" required="">
 				<input type="password" name="passwordConf" placeholder="Confirm Password" required="">
-				<input type="submit" value="REGISTER">
+				<input id="btn-register" type="submit" value="REGISTER">
 			</form>
 			<h2><a href="#"> By clicking register, I agree to your terms</a></h2>
             <h3>Already a member?<a href="login"> Login now</a></h3>
@@ -65,6 +68,45 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <!--//scrolling js-->
 <script src="js/bootstrap.js"> </script>
 <!-- mother grid end here-->
+<script>
+    var typingTimer;                //timer identifier
+    var doneTypingInterval = 700;  //time in ms, 5 second for example
+    var $input = $('#team');
+
+    //on keyup, start the countdown
+    $input.on('keyup', function () {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(doneTyping, doneTypingInterval);
+    });
+
+    //on keydown, clear the countdown
+    $input.on('keydown', function () {
+        clearTimeout(typingTimer);
+    });
+
+    //user is "finished typing," do something
+    function doneTyping () {
+        var url = "/freeDomains";
+        $.ajax({
+            type: 'GET',
+            url: url,
+            data: {
+                team: $input.val()
+            }
+        }).done(function (response) {
+            console.log(JSON.stringify(response));
+            if (response.domains > 0) {
+                $('#btn-register').css("display", "none")
+                $('#team_alert').css("display", "")
+                $('#team_alert').text($('#team').val() + " is already taken")
+
+			} else {
+                $('#btn-register').css("display", "")
+                $('#team_alert').css("display", "none")
+			}
+        });
+    }
+</script>
 </body>
 </html>
 
